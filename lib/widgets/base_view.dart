@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'custom_drawer.dart';
 
 class BaseView extends StatelessWidget {
   final String title;
@@ -11,7 +12,7 @@ class BaseView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text(title)),
-      //drawer: const CustomDrawer(), // Drawer persistente para todas las vistas
+      drawer: const CustomDrawer(), // Drawer persistente para todas las vistas
       body: body,
     );
   }
