@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../models/category.dart';
 import '../../services/category_service.dart';
+import '../../themes/category_theme/item_detail_view_theme.dart';
 
 class ItemDetailView extends StatefulWidget {
   final String itemId;
@@ -68,10 +69,10 @@ class _ItemDetailViewState extends State<ItemDetailView> {
       slivers: [
         // App Bar con imagen de fondo
         SliverAppBar(
-          expandedHeight: 300.0,
+          expandedHeight: ItemDetailViewTheme.appBarExpandedHeight,
           floating: false,
           pinned: true,
-          backgroundColor: Colors.orange,
+          backgroundColor: ItemDetailViewTheme.appBarBackgroundColor,
           flexibleSpace: FlexibleSpaceBar(
             background: Stack(
               fit: StackFit.expand,
@@ -88,40 +89,20 @@ class _ItemDetailViewState extends State<ItemDetailView> {
                 
                 // Gradiente sobre la imagen
                 Container(
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      colors: [
-                        Colors.transparent,
-                        Colors.black.withValues(alpha: 0.3),
-                        Colors.black.withValues(alpha: 0.7),
-                      ],
-                    ),
-                  ),
+                  decoration: ItemDetailViewTheme.imageGradientDecoration,
                 ),
 
                 // Indicador de estado si no está disponible
                 if (!item.estItem)
                   Positioned(
-                    top: 100,
-                    right: 16,
+                    top: ItemDetailViewTheme.notAvailableTop,
+                    right: ItemDetailViewTheme.notAvailableRight,
                     child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 12.0,
-                        vertical: 6.0,
-                      ),
-                      decoration: BoxDecoration(
-                        color: Colors.red,
-                        borderRadius: BorderRadius.circular(20.0),
-                      ),
+                      padding: ItemDetailViewTheme.notAvailablePadding,
+                      decoration: ItemDetailViewTheme.notAvailableDecoration,
                       child: const Text(
                         'NO DISPONIBLE',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 12,
-                        ),
+                        style: ItemDetailViewTheme.notAvailableTextStyle,
                       ),
                     ),
                   ),
@@ -133,7 +114,7 @@ class _ItemDetailViewState extends State<ItemDetailView> {
         // Contenido principal
         SliverToBoxAdapter(
           child: Padding(
-            padding: const EdgeInsets.all(20.0),
+            padding: ItemDetailViewTheme.mainPadding,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -144,91 +125,61 @@ class _ItemDetailViewState extends State<ItemDetailView> {
                     Expanded(
                       child: Text(
                         item.nomItem,
-                        style: TextStyle(
-                          fontSize: 28,
-                          fontWeight: FontWeight.bold,
-                          color: item.estItem ? Colors.black87 : Colors.grey[600],
-                        ),
+                        style: item.estItem 
+                            ? ItemDetailViewTheme.itemNameStyle
+                            : ItemDetailViewTheme.itemNameDisabledStyle,
                       ),
                     ),
                     // Precio
                     Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 16.0,
-                        vertical: 8.0,
-                      ),
-                      decoration: BoxDecoration(
-                        color: item.estItem ? Colors.green[100] : Colors.grey[200],
-                        borderRadius: BorderRadius.circular(12.0),
-                      ),
+                      padding: ItemDetailViewTheme.priceContainerPadding,
+                      decoration: ItemDetailViewTheme.priceContainerDecoration(item.estItem),
                       child: Text(
                         '\$${item.precItem.toStringAsFixed(0)}',
-                        style: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                          color: item.estItem ? Colors.green[700] : Colors.grey[600],
-                        ),
+                        style: item.estItem 
+                            ? ItemDetailViewTheme.priceStyle
+                            : ItemDetailViewTheme.priceDisabledStyle,
                       ),
                     ),
                   ],
                 ),
 
-                const SizedBox(height: 24),
+                const SizedBox(height: ItemDetailViewTheme.itemNameSpacing),
 
                 // Descripción
                 if (item.descItem.isNotEmpty) ...[
                   const Text(
                     'Descripción',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black87,
-                    ),
+                    style: ItemDetailViewTheme.descriptionTitleStyle,
                   ),
-                  const SizedBox(height: 12),
+                  const SizedBox(height: ItemDetailViewTheme.descriptionSpacing),
                   Container(
                     width: double.infinity,
-                    padding: const EdgeInsets.all(16.0),
-                    decoration: BoxDecoration(
-                      color: Colors.grey[50],
-                      borderRadius: BorderRadius.circular(12.0),
-                      border: Border.all(color: Colors.grey[200]!),
-                    ),
+                    padding: ItemDetailViewTheme.descriptionPadding,
+                    decoration: ItemDetailViewTheme.descriptionDecoration,
                     child: Text(
                       item.descItem,
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: Colors.grey[700],
-                        height: 1.5,
-                      ),
+                      style: ItemDetailViewTheme.descriptionTextStyle,
                     ),
                   ),
                 ] else ...[
                   Container(
                     width: double.infinity,
-                    padding: const EdgeInsets.all(16.0),
-                    decoration: BoxDecoration(
-                      color: Colors.grey[50],
-                      borderRadius: BorderRadius.circular(12.0),
-                      border: Border.all(color: Colors.grey[200]!),
-                    ),
+                    padding: ItemDetailViewTheme.descriptionPadding,
+                    decoration: ItemDetailViewTheme.descriptionDecoration,
                     child: Text(
                       'Este producto no tiene descripción disponible.',
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: Colors.grey[500],
-                        fontStyle: FontStyle.italic,
-                      ),
+                      style: ItemDetailViewTheme.descriptionPlaceholderStyle,
                     ),
                   ),
                 ],
 
-                const SizedBox(height: 32),
+                const SizedBox(height: ItemDetailViewTheme.infoCardSpacing),
 
                 // Información adicional
                 _buildInfoCard(),
 
-                const SizedBox(height: 32),
+                const SizedBox(height: ItemDetailViewTheme.infoCardSpacing),
 
                 // Botones de acción
                 _buildActionButtons(item),
@@ -245,12 +196,8 @@ class _ItemDetailViewState extends State<ItemDetailView> {
   Widget _buildInfoCard() {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(20.0),
-      decoration: BoxDecoration(
-        color: Colors.orange[50],
-        borderRadius: BorderRadius.circular(16.0),
-        border: Border.all(color: Colors.orange[200]!),
-      ),
+      padding: ItemDetailViewTheme.infoCardPadding,
+      decoration: ItemDetailViewTheme.infoCardDecoration,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -258,29 +205,25 @@ class _ItemDetailViewState extends State<ItemDetailView> {
             children: [
               Icon(
                 Icons.info_outline,
-                color: Colors.orange[700],
+                color: ItemDetailViewTheme.infoCardIconColor,
                 size: 24,
               ),
               const SizedBox(width: 8),
               Text(
                 'Información del Producto',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.orange[800],
-                ),
+                style: ItemDetailViewTheme.infoCardTitleStyle,
               ),
             ],
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: ItemDetailViewTheme.infoCardTitleSpacing),
           _buildInfoRow(Icons.restaurant, 'ID del Producto', '#${widget.itemId}'),
-          const SizedBox(height: 8),
+          const SizedBox(height: ItemDetailViewTheme.infoRowSpacing),
           _buildInfoRow(
             Icons.schedule, 
             'Tiempo de preparación', 
             '15-20 minutos'
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: ItemDetailViewTheme.infoRowSpacing),
           _buildInfoRow(
             Icons.local_offer, 
             'Categoría', 
@@ -297,24 +240,17 @@ class _ItemDetailViewState extends State<ItemDetailView> {
         Icon(
           icon,
           size: 18,
-          color: Colors.orange[600],
+          color: ItemDetailViewTheme.infoCardRowIconColor,
         ),
         const SizedBox(width: 8),
         Text(
           '$label: ',
-          style: TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.w500,
-            color: Colors.grey[700],
-          ),
+          style: ItemDetailViewTheme.infoRowLabelStyle,
         ),
         Expanded(
           child: Text(
             value,
-            style: TextStyle(
-              fontSize: 14,
-              color: Colors.grey[600],
-            ),
+            style: ItemDetailViewTheme.infoRowValueStyle,
           ),
         ),
       ],
@@ -327,87 +263,68 @@ class _ItemDetailViewState extends State<ItemDetailView> {
         // Botón principal
         SizedBox(
           width: double.infinity,
-          height: 56,
+          height: ItemDetailViewTheme.actionButtonHeight,
           child: ElevatedButton(
             onPressed: item.estItem
                 ? () {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
                         content: Text('${item.nomItem} agregado al carrito'),
-                        backgroundColor: Colors.green,
+                        backgroundColor: ItemDetailViewTheme.primaryOrangeShade600,
                         behavior: SnackBarBehavior.floating,
                       ),
                     );
                   }
                 : null,
-            style: ElevatedButton.styleFrom(
-              backgroundColor: item.estItem ? Colors.orange : Colors.grey[300],
-              foregroundColor: Colors.white,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16.0),
-              ),
-              elevation: item.estItem ? 4 : 0,
-            ),
+            style: ItemDetailViewTheme.primaryButtonStyle(item.estItem),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Icon(
                   item.estItem ? Icons.add_shopping_cart : Icons.block,
-                  size: 24,
+                  size: ItemDetailViewTheme.buttonIconSize,
                 ),
-                const SizedBox(width: 12),
+                const SizedBox(width: ItemDetailViewTheme.buttonTextSpacing),
                 Text(
                   item.estItem
                       ? 'Agregar al Carrito - \$${item.precItem.toStringAsFixed(0)}'
                       : 'Producto No Disponible',
-                  style: const TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: ItemDetailViewTheme.primaryButtonTextStyle,
                 ),
               ],
             ),
           ),
         ),
 
-        const SizedBox(height: 16),
+        const SizedBox(height: ItemDetailViewTheme.buttonSpacing),
 
         // Botón secundario
         SizedBox(
           width: double.infinity,
-          height: 48,
+          height: ItemDetailViewTheme.secondaryButtonHeight,
           child: OutlinedButton(
             onPressed: () {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
                   content: Text('${item.nomItem} agregado a favoritos'),
-                  backgroundColor: Colors.blue,
+                  backgroundColor: ItemDetailViewTheme.primaryOrangeShade600,
                   behavior: SnackBarBehavior.floating,
                 ),
               );
             },
-            style: OutlinedButton.styleFrom(
-              side: BorderSide(color: Colors.orange[300]!),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16.0),
-              ),
-            ),
+            style: ItemDetailViewTheme.secondaryButtonStyle,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Icon(
                   Icons.favorite_border,
-                  color: Colors.orange[600],
-                  size: 20,
+                  color: ItemDetailViewTheme.secondaryButtonIconColor,
+                  size: ItemDetailViewTheme.secondaryButtonIconSize,
                 ),
-                const SizedBox(width: 8),
+                SizedBox(width: ItemDetailViewTheme.secondaryButtonTextSpacing),
                 Text(
                   'Agregar a Favoritos',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500,
-                    color: Colors.orange[700],
-                  ),
+                  style: ItemDetailViewTheme.secondaryButtonTextStyle,
                 ),
               ],
             ),
@@ -419,23 +336,29 @@ class _ItemDetailViewState extends State<ItemDetailView> {
 
   Widget _buildPlaceholderBackground() {
     return Container(
-      color: Colors.grey[300],
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            ItemDetailViewTheme.placeholderBackgroundColor,
+            Colors.white,
+          ],
+        ),
+      ),
       child: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(
               Icons.restaurant,
-              size: 80,
-              color: Colors.grey[500],
+              size: ItemDetailViewTheme.placeholderIconSize,
+              color: ItemDetailViewTheme.placeholderIconColor,
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: ItemDetailViewTheme.placeholderSpacing),
             Text(
               'Sin imagen disponible',
-              style: TextStyle(
-                fontSize: 16,
-                color: Colors.grey[600],
-              ),
+              style: ItemDetailViewTheme.placeholderTextStyle,
             ),
           ],
         ),
@@ -447,50 +370,38 @@ class _ItemDetailViewState extends State<ItemDetailView> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Item no encontrado'),
-        backgroundColor: Colors.red,
-        foregroundColor: Colors.white,
+        backgroundColor: ItemDetailViewTheme.errorAppBarColor,
+        foregroundColor: ItemDetailViewTheme.errorAppBarTextColor,
       ),
       body: Center(
         child: Padding(
-          padding: const EdgeInsets.all(32.0),
+          padding: ItemDetailViewTheme.errorPadding,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Icon(
                 Icons.search_off,
-                size: 100,
-                color: Colors.red[300],
+                size: ItemDetailViewTheme.errorIconSize,
+                color: ItemDetailViewTheme.errorIconColor,
               ),
-              const SizedBox(height: 24),
+              const SizedBox(height: ItemDetailViewTheme.errorSpacing),
               Text(
                 'Item no encontrado',
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.red[600],
-                ),
+                style: ItemDetailViewTheme.errorTitleStyle,
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: ItemDetailViewTheme.errorDescriptionSpacing),
               Text(
                 'El item que buscas no existe o ha sido eliminado.',
                 textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.grey[600],
-                ),
+                style: ItemDetailViewTheme.errorDescriptionStyle,
               ),
-              const SizedBox(height: 32),
+              const SizedBox(height: ItemDetailViewTheme.errorButtonSpacing),
               ElevatedButton.icon(
                 onPressed: () => context.pop(),
                 icon: const Icon(Icons.arrow_back),
                 label: const Text('Volver al Menú'),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.orange,
-                  foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 24,
-                    vertical: 12,
-                  ),
+                style: ItemDetailViewTheme.errorButtonStyle.copyWith(
+                  padding: WidgetStateProperty.all(ItemDetailViewTheme.errorButtonPadding),
                 ),
               ),
             ],
@@ -504,39 +415,32 @@ class _ItemDetailViewState extends State<ItemDetailView> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Error'),
-        backgroundColor: Colors.red,
-        foregroundColor: Colors.white,
+        backgroundColor: ItemDetailViewTheme.errorAppBarColor,
+        foregroundColor: ItemDetailViewTheme.errorAppBarTextColor,
       ),
       body: Center(
         child: Padding(
-          padding: const EdgeInsets.all(32.0),
+          padding: ItemDetailViewTheme.errorPadding,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Icon(
                 Icons.error_outline,
-                size: 100,
-                color: Colors.red[300],
+                size: ItemDetailViewTheme.errorIconSize,
+                color: ItemDetailViewTheme.errorIconColor,
               ),
-              const SizedBox(height: 24),
+              const SizedBox(height: ItemDetailViewTheme.errorSpacing),
               Text(
                 'Error al cargar el item',
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.red[600],
-                ),
+                style: ItemDetailViewTheme.errorTitleStyle,
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: ItemDetailViewTheme.errorDescriptionSpacing),
               Text(
                 '$error',
                 textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.grey[600],
-                ),
+                style: ItemDetailViewTheme.errorDescriptionStyle,
               ),
-              const SizedBox(height: 32),
+              const SizedBox(height: ItemDetailViewTheme.errorButtonSpacing),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -548,12 +452,9 @@ class _ItemDetailViewState extends State<ItemDetailView> {
                     },
                     icon: const Icon(Icons.refresh),
                     label: const Text('Reintentar'),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.orange,
-                      foregroundColor: Colors.white,
-                    ),
+                    style: ItemDetailViewTheme.errorButtonStyle,
                   ),
-                  const SizedBox(width: 16),
+                  const SizedBox(width: ItemDetailViewTheme.errorButtonRowSpacing),
                   OutlinedButton.icon(
                     onPressed: () => context.pop(),
                     icon: const Icon(Icons.arrow_back),

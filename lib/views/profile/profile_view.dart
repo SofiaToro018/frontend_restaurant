@@ -398,7 +398,7 @@ class _ProfileViewState extends State<ProfileView> {
           width: double.infinity,
           child: ElevatedButton.icon(
             onPressed: () {
-              // TODO: Implementar edición de perfil
+              
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(
                   content: Text('Edición de perfil próximamente'),
@@ -425,7 +425,7 @@ class _ProfileViewState extends State<ProfileView> {
           width: double.infinity,
           child: OutlinedButton.icon(
             onPressed: () {
-              // TODO: Implementar cambio de contraseña
+              
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(
                   content: Text('Cambio de contraseña próximamente'),

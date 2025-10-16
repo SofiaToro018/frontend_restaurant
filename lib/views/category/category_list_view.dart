@@ -4,6 +4,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 import '../../models/category.dart';
 import '../../services/category_service.dart';
+import '../../themes/category_theme/category_list_view_theme.dart';
 import '../../widgets/base_view.dart';
 
 class CategoryListView extends StatefulWidget {
@@ -31,304 +32,370 @@ class _CategoryListViewState extends State<CategoryListView> {
   @override
   Widget build(BuildContext context) {
     return BaseView(
-      title: 'Menú Completo',
-      body: FutureBuilder<List<Category>>(
-        future: _futureCategories,
-        builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            final categories = snapshot.data!;
-            if (categories.isEmpty) {
-              return Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      Icons.restaurant_menu,
-                      size: 64,
-                      color: Colors.grey[400],
+      title: 'Menú',
+      body: Container(
+        color: CategoryListViewTheme.backgroundColor,
+        child: FutureBuilder<List<Category>>(
+          future: _futureCategories,
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              final categories = snapshot.data!;
+              if (categories.isEmpty) {
+                return _buildEmptyView();
+              }
+              return CustomScrollView(
+                slivers: [
+                  // Banner superior elegante
+                  _buildBannerSection(),
+                  
+                  // Contenido principal
+                  SliverToBoxAdapter(
+                    child: Padding(
+                      padding: CategoryListViewTheme.mainContentPadding,
+                      child: Column(
+                        children: [
+                          const SizedBox(height: CategoryListViewTheme.mainContentTopSpacing),
+                          ...categories.map((category) => _buildCategorySection(category)),
+                        ],
+                      ),
                     ),
-                    const SizedBox(height: 16),
-                    Text(
-                      'No hay menú disponible',
-                      style: TextStyle(fontSize: 18, color: Colors.grey[600]),
-                    ),
-                  ],
-                ),
+                  ),
+                ],
               );
+            } else if (snapshot.hasError) {
+              return _buildErrorView(snapshot.error);
             }
-            return ListView.builder(
-              padding: const EdgeInsets.all(16.0),
-              itemCount: categories.length,
-              itemBuilder: (context, index) {
-                final category = categories[index];
-                return _buildCategorySection(category);
-              },
-            );
-          } else if (snapshot.hasError) {
-            return _buildErrorView(snapshot.error);
-          }
-          return const Center(child: CircularProgressIndicator());
-        },
+            return const Center(child: CircularProgressIndicator());
+          },
+        ),
+      ),
+    );
+  }
+
+  Widget _buildBannerSection() {
+    return SliverToBoxAdapter(
+      child: Container(
+        height: CategoryListViewTheme.bannerHeight,
+        margin: CategoryListViewTheme.bannerMargin,
+        decoration: CategoryListViewTheme.bannerDecoration,
+        child: Stack(
+          children: [
+            // Imagen decorativa
+            Positioned(
+              right: CategoryListViewTheme.bannerDecorationIconRight,
+              top: CategoryListViewTheme.bannerDecorationIconTop,
+              child: Opacity(
+                opacity: CategoryListViewTheme.bannerDecorationIconOpacity,
+                child: Icon(
+                  Icons.restaurant,
+                  size: CategoryListViewTheme.bannerDecorationIconSize,
+                  color: CategoryListViewTheme.bannerDecorationIconColor,
+                ),
+              ),
+            ),
+            // Contenido principal del banner
+            Positioned(
+              left: CategoryListViewTheme.bannerContentLeft,
+              right: CategoryListViewTheme.bannerContentRight,
+              bottom: CategoryListViewTheme.bannerContentBottom,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    'Restaurante',
+                    style: CategoryListViewTheme.bannerSubtitleStyle,
+                  ),
+                  const SizedBox(height: CategoryListViewTheme.bannerInternalSpacing1),
+                  Text(
+                    'UCEVA',
+                    style: CategoryListViewTheme.bannerTitleStyle,
+                  ),
+                  const SizedBox(height: CategoryListViewTheme.bannerInternalSpacing2),
+                  Container(
+                    padding: CategoryListViewTheme.bannerDescriptionPadding,
+                    decoration: CategoryListViewTheme.bannerDescriptionDecoration,
+                    child: Text(
+                      'Menú del día • Especialidades • Tradición',
+                      style: CategoryListViewTheme.bannerDescriptionStyle,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildEmptyView() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.restaurant_menu,
+            size: CategoryListViewTheme.emptyViewIconSize,
+            color: CategoryListViewTheme.emptyViewIconColor,
+          ),
+          const SizedBox(height: CategoryListViewTheme.emptyViewSpacing),
+          Text(
+            'No hay menú disponible',
+            style: CategoryListViewTheme.emptyViewTitleStyle.copyWith(
+              color: CategoryListViewTheme.emptyViewTextColor,
+            ),
+          ),
+        ],
       ),
     );
   }
 
   Widget _buildCategorySection(Category category) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        // Header de la categoría
-        Container(
-          width: double.infinity,
-          margin: const EdgeInsets.only(bottom: 12.0),
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [Colors.orange.shade400, Colors.deepOrange.shade500],
-              begin: Alignment.centerLeft,
-              end: Alignment.centerRight,
-            ),
-            borderRadius: BorderRadius.circular(12.0),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.grey[300]!,
-                blurRadius: 8.0,
-                offset: const Offset(0, 4),
-              ),
-            ],
-          ),
-          child: Material(
-            color: Colors.transparent,
-            child: InkWell(
-              borderRadius: BorderRadius.circular(12.0),
-              onTap: () {
-                // Navegar al detalle de la categoría
-                context.push('/category/${category.id}');
-              },
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  vertical: 16.0,
-                  horizontal: 20.0,
-                ),
-                child: Row(
-                  children: [
-                    Icon(
-                      _getCategoryIcon(category.nombre),
-                      color: Colors.white,
-                      size: 32,
-                    ),
-                    const SizedBox(width: 12.0),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            category.nombre.toUpperCase(),
-                            style: const TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
-                            ),
-                          ),
-                          Text(
-                            '${category.itemsMenu.where((item) => item.estItem).length} items disponibles',
-                            style: const TextStyle(
-                              fontSize: 14,
-                              color: Colors.white70,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const Icon(
-                      Icons.arrow_forward_ios,
-                      color: Colors.white,
-                      size: 20,
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        ),
-
-        // Lista horizontal de items de la categoría
-        if (category.itemsMenu.isEmpty)
-          Container(
-            padding: const EdgeInsets.all(20.0),
-            margin: const EdgeInsets.only(bottom: 20.0),
-            decoration: BoxDecoration(
-              color: Colors.grey[100],
-              borderRadius: BorderRadius.circular(8.0),
-            ),
-            child: Center(
-              child: Text(
-                'No hay items en esta categoría',
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.grey[600],
-                  fontStyle: FontStyle.italic,
-                ),
-              ),
-            ),
-          )
-        else
-          SizedBox(
-            height: 220, // Altura fija para el scroll horizontal
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              padding: const EdgeInsets.symmetric(horizontal: 4.0),
-              itemCount: category.itemsMenu.length,
-              itemBuilder: (context, index) {
-                return _buildMenuItem(category.itemsMenu[index], category.id);
-              },
-            ),
-          ),
-
-        const SizedBox(height: 24.0), // Separador entre categorías
-      ],
-    );
-  }
-
-  Widget _buildMenuItem(ItemMenu item, int categoryId) {
     return Container(
-      width: 180, // Ancho fijo para cada tarjeta horizontal
-      margin: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12.0),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey[200]!,
-            blurRadius: 4.0,
-            offset: const Offset(0, 2),
-          ),
-        ],
-        border: Border.all(
-          color: item.estItem ? Colors.transparent : Colors.red[200]!,
-          width: item.estItem ? 0 : 2,
-        ),
-      ),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          borderRadius: BorderRadius.circular(12.0),
-          onTap: item.estItem
-              ? () {
-                  // Navegar al detalle del item individual
-                  context.push('/item/${item.id}');
-                }
-              : null,
-          child: Padding(
-            padding: const EdgeInsets.all(12.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+      margin: const EdgeInsets.only(bottom: 32),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Título de la sección con flecha
+          Container(
+            margin: const EdgeInsets.only(bottom: 20),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                // Imagen del item
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(8.0),
-                  child: Container(
-                    width: double.infinity,
-                    height: 90,
-                    color: Colors.grey[200],
-                    child: item.imgItemMenu.isNotEmpty
-                        ? Image.network(
-                            item.imgItemMenu,
-                            fit: BoxFit.cover,
-                            errorBuilder: (context, error, stackTrace) =>
-                                _placeholderImage(),
-                            loadingBuilder: (context, child, progress) {
-                              if (progress == null) return child;
-                              return const Center(
-                                child: SizedBox(
-                                  width: 20,
-                                  height: 20,
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 2,
-                                  ),
-                                ),
-                              );
-                            },
-                          )
-                        : _placeholderImage(),
-                  ),
-                ),
-                const SizedBox(height: 8.0),
-
-                // Estado del item (si no está disponible)
-                if (!item.estItem)
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 6.0,
-                      vertical: 2.0,
-                    ),
-                    margin: const EdgeInsets.only(bottom: 4.0),
-                    decoration: BoxDecoration(
-                      color: Colors.red[100],
-                      borderRadius: BorderRadius.circular(4.0),
-                    ),
-                    child: Text(
-                      'No disponible',
-                      style: TextStyle(
-                        fontSize: 10,
-                        color: Colors.red[700],
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ),
-
-                // Nombre del item
                 Text(
-                  item.nomItem,
-                  style: TextStyle(
-                    fontSize: 14,
+                  category.nombre,
+                  style: const TextStyle(
+                    fontSize: 24,
                     fontWeight: FontWeight.bold,
-                    color: item.estItem ? Colors.black87 : Colors.grey[500],
+                    color: Colors.black87,
+                    letterSpacing: 0.5,
                   ),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
                 ),
-                const SizedBox(height: 4.0),
-
-                // Descripción
-                if (item.descItem.isNotEmpty)
-                  Text(
-                    item.descItem,
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: Colors.grey[600],
-                      height: 1.2,
+                GestureDetector(
+                  onTap: () {
+                    context.push('/category/${category.id}');
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    decoration: BoxDecoration(
+                      color: Colors.orange[50],
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(color: Colors.orange[200]!),
                     ),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          'Ver todo',
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.orange[700],
+                          ),
+                        ),
+                        const SizedBox(width: 4),
+                        Icon(
+                          Icons.arrow_forward,
+                          size: 16,
+                          color: Colors.orange[700],
+                        ),
+                      ],
+                    ),
                   ),
-
-                const Spacer(), // Empuja el precio hacia abajo
-                // Precio y botón de agregar
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      '\$${item.precItem.toStringAsFixed(0)}',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: item.estItem
-                            ? Colors.green[600]
-                            : Colors.grey[500],
-                      ),
-                    ),
-                    if (item.estItem)
-                      Icon(
-                        Icons.add_shopping_cart,
-                        color: Colors.orange[600],
-                        size: 20,
-                      ),
-                  ],
                 ),
               ],
             ),
           ),
+
+          // Lista horizontal de items
+          if (category.itemsMenu.isEmpty)
+            _buildEmptyCategory()
+          else
+            SizedBox(
+              height: 280, // Altura aumentada para las nuevas tarjetas
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                padding: const EdgeInsets.symmetric(horizontal: 4),
+                itemCount: category.itemsMenu.length,
+                itemBuilder: (context, index) {
+                  return _buildMenuItemCard(category.itemsMenu[index]);
+                },
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMenuItemCard(ItemMenu item) {
+    return Container(
+      width: CategoryListViewTheme.cardHorizontalWidth,
+      margin: CategoryListViewTheme.cardHorizontalMargin,
+      decoration: CategoryListViewTheme.buildCardDecoration(),
+      child: Material(
+        color: Colors.transparent,
+        borderRadius: BorderRadius.circular(CategoryListViewTheme.cardBorderRadius),
+        child: InkWell(
+          borderRadius: BorderRadius.circular(CategoryListViewTheme.cardBorderRadius),
+          onTap: item.estItem
+              ? () {
+                  context.push('/item/${item.id}');
+                }
+              : null,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Imagen del plato
+              ClipRRect(
+                borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(CategoryListViewTheme.cardBorderRadius),
+                  topRight: Radius.circular(CategoryListViewTheme.cardBorderRadius),
+                ),
+                child: Container(
+                  width: double.infinity,
+                  height: CategoryListViewTheme.cardImageHeight,
+                  color: CategoryListViewTheme.cardImageBackgroundColor,
+                  child: item.imgItemMenu.isNotEmpty
+                      ? Image.network(
+                          item.imgItemMenu,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) =>
+                              _buildPlaceholderImage(),
+                          loadingBuilder: (context, child, progress) {
+                            if (progress == null) return child;
+                            return const Center(
+                              child: CircularProgressIndicator(
+                                strokeWidth: CategoryListViewTheme.loadingStrokeWidth,
+                                valueColor: AlwaysStoppedAnimation<Color>(CategoryListViewTheme.loadingColor),
+                              ),
+                            );
+                          },
+                        )
+                      : _buildPlaceholderImage(),
+                ),
+              ),
+              
+              // Contenido de la tarjeta
+              Expanded(
+                child: Padding(
+                  padding: CategoryListViewTheme.cardPadding,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Estado "No disponible" si aplica
+                      if (!item.estItem)
+                        Container(
+                          padding: CategoryListViewTheme.cardUnavailablePadding,
+                          margin: CategoryListViewTheme.cardUnavailableMargin,
+                          decoration: CategoryListViewTheme.buildCardUnavailableDecoration(),
+                          child: Text(
+                            'No disponible',
+                            style: CategoryListViewTheme.cardUnavailableTextStyle,
+                          ),
+                        ),
+                      
+                      // Nombre del plato
+                      Text(
+                        item.nomItem,
+                        style: item.estItem 
+                          ? CategoryListViewTheme.cardTitleStyle 
+                          : CategoryListViewTheme.cardTitleDisabledStyle,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      
+                      const SizedBox(height: CategoryListViewTheme.cardElementSpacing),
+                      
+                      // Descripción o "Chef"
+                      Text(
+                        item.descItem.isNotEmpty ? item.descItem : 'Chef',
+                        style: CategoryListViewTheme.cardDescriptionStyle,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      
+                      const Spacer(),
+                      
+                      // Fila inferior con precio e icono
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            '\$${item.precItem.toStringAsFixed(0)}',
+                            style: item.estItem 
+                              ? CategoryListViewTheme.cardPriceStyle 
+                              : CategoryListViewTheme.cardPriceDisabledStyle,
+                          ),
+                          if (item.estItem)
+                            Container(
+                              padding: CategoryListViewTheme.cardButtonSmallPadding,
+                              decoration: CategoryListViewTheme.buildCardButtonSmallDecoration(),
+                              child: Icon(
+                                Icons.add,
+                                size: CategoryListViewTheme.cardButtonSmallIconSize,
+                                color: CategoryListViewTheme.cardButtonIconColor,
+                              ),
+                            ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildEmptyCategory() {
+    return Container(
+      height: CategoryListViewTheme.emptyCategoryHeight,
+      margin: CategoryListViewTheme.emptyCategoryMargin,
+      padding: CategoryListViewTheme.emptyCategoryPadding,
+      decoration: CategoryListViewTheme.emptyCategoryDecoration,
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.restaurant_menu_outlined,
+              size: CategoryListViewTheme.emptyCategoryIconSize,
+              color: CategoryListViewTheme.emptyCategoryIconColor,
+            ),
+            SizedBox(height: CategoryListViewTheme.emptyCategorySpacing),
+            Text(
+              'No hay items en esta categoría',
+              style: CategoryListViewTheme.emptyCategoryTextStyle,
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPlaceholderImage() {
+    return Container(
+      width: double.infinity,
+      height: double.infinity,
+      color: CategoryListViewTheme.placeholderImageBackgroundColor,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.restaurant,
+            size: CategoryListViewTheme.placeholderImageIconSize,
+            color: CategoryListViewTheme.placeholderImageIconColor,
+          ),
+          SizedBox(height: CategoryListViewTheme.placeholderImageSpacing),
+          Text(
+            'Sin imagen',
+            style: CategoryListViewTheme.placeholderImageTextStyle,
+          ),
+        ],
       ),
     );
   }
@@ -338,21 +405,21 @@ class _CategoryListViewState extends State<CategoryListView> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.error_outline, size: 64, color: Colors.red[300]),
-          const SizedBox(height: 16),
+          Icon(
+            Icons.error_outline, 
+            size: CategoryListViewTheme.emptyViewIconSize, 
+            color: CategoryListViewTheme.errorIconColor,
+          ),
+          const SizedBox(height: CategoryListViewTheme.emptyViewSpacing),
           Text(
             'Error al cargar el menú',
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: Colors.red[600],
-            ),
+            style: CategoryListViewTheme.errorTitleStyle,
           ),
           const SizedBox(height: 8),
           Text(
             '$error',
             textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 14, color: Colors.red[500]),
+            style: CategoryListViewTheme.errorDescriptionStyle,
           ),
           const SizedBox(height: 16),
           ElevatedButton(
@@ -371,29 +438,5 @@ class _CategoryListViewState extends State<CategoryListView> {
         ],
       ),
     );
-  }
-
-  Widget _placeholderImage() {
-    return Container(
-      width: double.infinity,
-      height: double.infinity,
-      color: Colors.grey[200],
-      child: Icon(Icons.restaurant, size: 32, color: Colors.grey[400]),
-    );
-  }
-
-  IconData _getCategoryIcon(String categoryName) {
-    switch (categoryName.toLowerCase()) {
-      case 'entradas':
-        return Icons.restaurant;
-      case 'platos principales':
-        return Icons.dinner_dining;
-      case 'postres':
-        return Icons.cake;
-      case 'bebidas':
-        return Icons.local_drink;
-      default:
-        return Icons.restaurant_menu;
-    }
   }
 }
