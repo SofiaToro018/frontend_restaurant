@@ -1,19 +1,18 @@
 import 'package:go_router/go_router.dart';
-import '../views/home/home_view.dart';
 import '../views/category/category_list_view.dart';
 import '../views/category/category_items_list_view.dart';
 import '../views/category/item_detail_view.dart';
 
 final GoRouter appRouter = GoRouter(
-  initialLocation: '/',
+  initialLocation: '/menu',
   routes: [
-    // Ruta principal - Home/Inicio
+    // Redirección desde raíz al menú
     GoRoute(
       path: '/',
-      builder: (context, state) => const HomeView(),
+      redirect: (context, state) => '/menu',
     ),
     
-    // Ruta para menú completo (categorías con todos sus items)
+    // Ruta principal - Menú de Categorías (Vista inicial)
     GoRoute(
       path: '/menu',
       builder: (context, state) => const CategoryListView(),
