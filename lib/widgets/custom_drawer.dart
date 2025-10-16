@@ -58,14 +58,15 @@ class CustomDrawer extends StatelessWidget {
             },
           ),
           
-          // Opción: Categorías del Menú
+          
+          // Opción: Menú Completo
           ListTile(
             leading: const Icon(Icons.restaurant_menu),
-            title: const Text('Categorías del Menú'),
-            subtitle: const Text('Ver todas las categorías'),
+            title: const Text('Menú Completo'),
+            subtitle: const Text('Ver todos los platillos'),
             onTap: () {
               Navigator.pop(context);
-              context.go('/categories');
+              context.go('/menu');
             },
           ),
           
