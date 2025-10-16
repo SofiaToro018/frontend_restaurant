@@ -79,6 +79,17 @@ class CustomDrawer extends StatelessWidget {
               context.go('/bookings');
             },
           ),
+
+          // Opción: Perfil
+          ListTile(
+            leading: const Icon(Icons.account_circle),
+            title: const Text('Mi Perfil'),
+            subtitle: const Text('Ver información'),
+            onTap: () {
+              Navigator.pop(context);
+              context.go('/profile');
+            },
+          ),
           
           const Divider(),
           

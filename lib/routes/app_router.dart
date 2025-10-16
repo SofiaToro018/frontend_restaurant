@@ -8,6 +8,7 @@ import '../views/booking/booking_list_view.dart';
 import '../views/booking/booking_detail_view.dart';
 import '../views/audit_log/audit_log_list_view.dart';
 import '../views/audit_log/audit_log_detail_view.dart';
+import '../views/profile/profile_view.dart';
 
 final GoRouter appRouter = GoRouter(
   initialLocation: '/menu',
@@ -85,6 +86,12 @@ final GoRouter appRouter = GoRouter(
         final auditLogId = state.pathParameters['id']!;
         return AuditLogDetailView(auditLogId: auditLogId);
       },
+    ),
+    
+    // Ruta para perfil de usuario
+    GoRoute(
+      path: '/profile',
+      builder: (context, state) => const ProfileView(),
     ),
   ],
 
