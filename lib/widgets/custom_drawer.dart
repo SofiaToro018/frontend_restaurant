@@ -68,6 +68,17 @@ class CustomDrawer extends StatelessWidget {
               context.go('/orders');
             },
           ),
+
+          // Opción: Reservas
+          ListTile(
+            leading: const Icon(Icons.event_seat),
+            title: const Text('Mis Reservas'),
+            subtitle: const Text('Ver reservas'),
+            onTap: () {
+              Navigator.pop(context);
+              context.go('/bookings');
+            },
+          ),
           
           const Divider(),
           
