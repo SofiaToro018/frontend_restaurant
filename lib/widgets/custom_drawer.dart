@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:frontend_restaurant/themes/custom_drawer_themes.dart';
 
 class CustomDrawer extends StatelessWidget {
   const CustomDrawer({super.key});
@@ -11,38 +12,25 @@ class CustomDrawer extends StatelessWidget {
         padding: EdgeInsets.zero,
         children: [
           // Header del drawer
-          const DrawerHeader(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [Colors.orange, Colors.deepOrange],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
-            ),
+          DrawerHeader(
+            decoration: CustomDrawerThemes.headerDecoration,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 Icon(
-                  Icons.restaurant,
-                  size: 48,
-                  color: Colors.white,
+                  CustomDrawerThemes.headerIcon,
+                  size: CustomDrawerThemes.headerIconSize,
+                  color: CustomDrawerThemes.headerIconColor,
                 ),
-                SizedBox(height: 8),
-                Text(
+                const SizedBox(height: CustomDrawerThemes.headerSpacing),
+                const Text(
                   'Restaurant App',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: CustomDrawerThemes.headerTitleStyle,
                 ),
-                Text(
+                const Text(
                   'Menú Digital',
-                  style: TextStyle(
-                    color: Colors.white70,
-                    fontSize: 16,
-                  ),
+                  style: CustomDrawerThemes.headerSubtitleStyle,
                 ),
               ],
             ),
@@ -95,14 +83,10 @@ class CustomDrawer extends StatelessWidget {
           
           // Sección de pruebas/desarrollo
           const Padding(
-            padding: EdgeInsets.all(16.0),
+            padding: CustomDrawerThemes.sectionPadding,
             child: Text(
               'Desarrollo',
-              style: TextStyle(
-                fontSize: 12,
-                color: Colors.grey,
-                fontWeight: FontWeight.bold,
-              ),
+              style: CustomDrawerThemes.sectionTextStyle,
             ),
           ),
           
