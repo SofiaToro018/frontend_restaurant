@@ -4,6 +4,8 @@ import '../views/category/category_items_list_view.dart';
 import '../views/category/item_detail_view.dart';
 import '../views/orders/orders_list_view.dart';
 import '../views/orders/orders_detail_view.dart';
+import '../views/booking/booking_list_view.dart';
+import '../views/booking/booking_detail_view.dart';
 
 final GoRouter appRouter = GoRouter(
   initialLocation: '/menu',
@@ -50,6 +52,21 @@ final GoRouter appRouter = GoRouter(
       builder: (context, state) {
         final orderId = state.pathParameters['id']!;
         return OrdersDetailView(orderId: orderId);
+      },
+    ),
+    
+    // Ruta para lista de reservas
+    GoRoute(
+      path: '/bookings',
+      builder: (context, state) => const BookingListView(),
+    ),
+    
+    // Ruta para detalle de reserva
+    GoRoute(
+      path: '/booking/:id',
+      builder: (context, state) {
+        final bookingId = state.pathParameters['id']!;
+        return BookingDetailView(bookingId: bookingId);
       },
     ),
   ],
