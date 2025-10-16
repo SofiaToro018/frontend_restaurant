@@ -48,16 +48,26 @@ class CustomDrawer extends StatelessWidget {
             ),
           ),
           
-          // Opción: Inicio
+          // Opción: Menú
           ListTile(
-            leading: const Icon(Icons.home),
-            title: const Text('Inicio'),
+            leading: const Icon(Icons.restaurant_menu),
+            title: const Text('Menú'),
             onTap: () {
               Navigator.pop(context);
-              context.go('/');
+              context.go('/menu');
             },
           ),
 
+          // Opción: Pedidos
+          ListTile(
+            leading: const Icon(Icons.receipt_long),
+            title: const Text('Mis Pedidos'),
+            subtitle: const Text('Ver historial'),
+            onTap: () {
+              Navigator.pop(context);
+              context.go('/orders');
+            },
+          ),
           
           const Divider(),
           
