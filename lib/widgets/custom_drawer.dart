@@ -95,6 +95,17 @@ class CustomDrawer extends StatelessWidget {
             ),
           ),
           
+          // Opción: Registro de Cambios
+          ListTile(
+            leading: const Icon(Icons.history),
+            title: const Text('Registro de Cambios'),
+            subtitle: const Text('Ver audit logs'),
+            onTap: () {
+              Navigator.pop(context);
+              context.go('/audit-logs');
+            },
+          ),
+          
           // Opción: Test API
           ListTile(
             leading: const Icon(Icons.api),

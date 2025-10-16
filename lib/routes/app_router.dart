@@ -6,6 +6,8 @@ import '../views/orders/orders_list_view.dart';
 import '../views/orders/orders_detail_view.dart';
 import '../views/booking/booking_list_view.dart';
 import '../views/booking/booking_detail_view.dart';
+import '../views/audit_log/audit_log_list_view.dart';
+import '../views/audit_log/audit_log_detail_view.dart';
 
 final GoRouter appRouter = GoRouter(
   initialLocation: '/menu',
@@ -67,6 +69,21 @@ final GoRouter appRouter = GoRouter(
       builder: (context, state) {
         final bookingId = state.pathParameters['id']!;
         return BookingDetailView(bookingId: bookingId);
+      },
+    ),
+    
+    // Ruta para lista de registros de cambios
+    GoRoute(
+      path: '/audit-logs',
+      builder: (context, state) => const AuditLogListView(),
+    ),
+    
+    // Ruta para detalle de registro de cambios
+    GoRoute(
+      path: '/audit-log/:id',
+      builder: (context, state) {
+        final auditLogId = state.pathParameters['id']!;
+        return AuditLogDetailView(auditLogId: auditLogId);
       },
     ),
   ],
