@@ -57,18 +57,7 @@ class CustomDrawer extends StatelessWidget {
               context.go('/');
             },
           ),
-          
-          
-          // Opción: Menú Completo
-          ListTile(
-            leading: const Icon(Icons.restaurant_menu),
-            title: const Text('Menú Completo'),
-            subtitle: const Text('Ver todos los platillos'),
-            onTap: () {
-              Navigator.pop(context);
-              context.go('/menu');
-            },
-          ),
+
           
           const Divider(),
           
