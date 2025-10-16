@@ -32,8 +32,6 @@ class _CategoryListViewState extends State<CategoryListView> {
   Widget build(BuildContext context) {
     return BaseView(
       title: 'Menú Completo',
-      currentIndex: 0, // índice de la pestaña actual (Inicio)
-      onTap: (index) {}, // función vacía, la navegación se maneja en BaseView
       body: FutureBuilder<List<Category>>(
         future: _futureCategories,
         builder: (context, snapshot) {

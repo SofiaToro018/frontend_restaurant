@@ -6,15 +6,13 @@ import 'custom_bottom_navbar.dart';
 class BaseView extends StatelessWidget {
   final String title;
   final Widget body;
-  final int? currentIndex;
-  final Function(int)? onTap;
+  final bool showBottomNavbar;
 
   const BaseView({
     super.key,
     required this.title,
     required this.body,
-    this.currentIndex,
-    this.onTap,
+    this.showBottomNavbar = true,
   });
 
   @override
@@ -23,11 +21,8 @@ class BaseView extends StatelessWidget {
       appBar: AppBar(title: Text(title)),
       drawer: const CustomDrawer(), // Drawer persistente para todas las vistas
       body: body,
-      bottomNavigationBar: currentIndex != null && onTap != null
-          ? CustomBottomNavbar(
-              currentIndex: currentIndex!,
-              onTap: onTap!,
-            ) // Barra de navegación inferior persistente
+      bottomNavigationBar: showBottomNavbar
+          ? const CustomBottomNavbar() // Barra de navegación inferior persistente
           : null,
     );
   }
