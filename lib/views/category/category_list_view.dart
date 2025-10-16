@@ -14,9 +14,8 @@ class CategoryListView extends StatefulWidget {
 }
 
 class _CategoryListViewState extends State<CategoryListView> {
-
   final CategoryService _categoryService = CategoryService();
-  
+
   late Future<List<Category>> _futureCategories;
 
   @override
@@ -24,13 +23,17 @@ class _CategoryListViewState extends State<CategoryListView> {
     super.initState();
     //! Obtiene las categorías con todos sus items
     final restaurantId = int.parse(dotenv.env['DEFAULT_RESTAURANT_ID'] ?? '1');
-    _futureCategories = _categoryService.getCategoriesByRestaurant(restaurantId);
+    _futureCategories = _categoryService.getCategoriesByRestaurant(
+      restaurantId,
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return BaseView(
       title: 'Menú Completo',
+      currentIndex: 0, // índice de la pestaña actual (Inicio)
+      onTap: (index) {}, // función vacía, la navegación se maneja en BaseView
       body: FutureBuilder<List<Category>>(
         future: _futureCategories,
         builder: (context, snapshot) {
@@ -49,10 +52,7 @@ class _CategoryListViewState extends State<CategoryListView> {
                     const SizedBox(height: 16),
                     Text(
                       'No hay menú disponible',
-                      style: TextStyle(
-                        fontSize: 18,
-                        color: Colors.grey[600],
-                      ),
+                      style: TextStyle(fontSize: 18, color: Colors.grey[600]),
                     ),
                   ],
                 ),
@@ -107,7 +107,10 @@ class _CategoryListViewState extends State<CategoryListView> {
                 context.push('/category/${category.id}');
               },
               child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 20.0),
+                padding: const EdgeInsets.symmetric(
+                  vertical: 16.0,
+                  horizontal: 20.0,
+                ),
                 child: Row(
                   children: [
                     Icon(
@@ -302,7 +305,6 @@ class _CategoryListViewState extends State<CategoryListView> {
                   ),
 
                 const Spacer(), // Empuja el precio hacia abajo
-
                 // Precio y botón de agregar
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -312,7 +314,9 @@ class _CategoryListViewState extends State<CategoryListView> {
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
-                        color: item.estItem ? Colors.green[600] : Colors.grey[500],
+                        color: item.estItem
+                            ? Colors.green[600]
+                            : Colors.grey[500],
                       ),
                     ),
                     if (item.estItem)
@@ -336,11 +340,7 @@ class _CategoryListViewState extends State<CategoryListView> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(
-            Icons.error_outline,
-            size: 64,
-            color: Colors.red[300],
-          ),
+          Icon(Icons.error_outline, size: 64, color: Colors.red[300]),
           const SizedBox(height: 16),
           Text(
             'Error al cargar el menú',
@@ -354,19 +354,18 @@ class _CategoryListViewState extends State<CategoryListView> {
           Text(
             '$error',
             textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 14,
-              color: Colors.red[500],
-            ),
+            style: TextStyle(fontSize: 14, color: Colors.red[500]),
           ),
           const SizedBox(height: 16),
           ElevatedButton(
             onPressed: () {
               setState(() {
-                final restaurantId =
-                    int.parse(dotenv.env['DEFAULT_RESTAURANT_ID'] ?? '1');
-                _futureCategories =
-                    _categoryService.getCategoriesByRestaurant(restaurantId);
+                final restaurantId = int.parse(
+                  dotenv.env['DEFAULT_RESTAURANT_ID'] ?? '1',
+                );
+                _futureCategories = _categoryService.getCategoriesByRestaurant(
+                  restaurantId,
+                );
               });
             },
             child: const Text('Reintentar'),
@@ -381,14 +380,9 @@ class _CategoryListViewState extends State<CategoryListView> {
       width: double.infinity,
       height: double.infinity,
       color: Colors.grey[200],
-      child: Icon(
-        Icons.restaurant,
-        size: 32,
-        color: Colors.grey[400],
-      ),
+      child: Icon(Icons.restaurant, size: 32, color: Colors.grey[400]),
     );
   }
-
 
   IconData _getCategoryIcon(String categoryName) {
     switch (categoryName.toLowerCase()) {
