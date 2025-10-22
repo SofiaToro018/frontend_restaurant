@@ -9,14 +9,21 @@ import '../views/booking/booking_detail_view.dart';
 import '../views/audit_log/audit_log_list_view.dart';
 import '../views/audit_log/audit_log_detail_view.dart';
 import '../views/profile/profile_view.dart';
+import '../auth/views/login_view.dart';
 
 final GoRouter appRouter = GoRouter(
-  initialLocation: '/menu',
+  initialLocation: '/login',
   routes: [
-    // Redirección desde raíz al menú
+    // Redirección desde raíz al login
     GoRoute(
       path: '/',
-      redirect: (context, state) => '/menu',
+      redirect: (context, state) => '/login',
+    ),
+    
+    // Ruta de autenticación
+    GoRoute(
+      path: '/login',
+      builder: (context, state) => const LoginView(),
     ),
     
     // Ruta principal - Menú de Categorías (Vista inicial)
