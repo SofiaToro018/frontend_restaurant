@@ -32,7 +32,7 @@ class _CategoryItemsListViewState extends State<CategoryItemsListView> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'Items de Categoría #${widget.categoryId}',
+          'Menú',
           style: CategoryItemsListViewTheme.appBarTitleStyle,
         ),
       ),

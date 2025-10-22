@@ -3,6 +3,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 import '../../models/profile.dart';
 import '../../services/profile_service.dart';
+import '../../themes/profile_theme/profile_view_theme.dart';
 import '../../widgets/base_view.dart';
 
 class ProfileView extends StatefulWidget {
@@ -42,23 +43,23 @@ class _ProfileViewState extends State<ProfileView> {
             final profile = snapshot.data!;
             
             return SingleChildScrollView(
-              padding: const EdgeInsets.all(16.0),
+              padding: ProfileViewTheme.mainPadding,
               child: Column(
                 children: [
                   // Card principal con información del perfil
                   _buildProfileCard(profile),
                   
-                  const SizedBox(height: 20),
+                  SizedBox(height: ProfileViewTheme.cardSpacing),
                   
                   // Card con información de contacto
                   _buildContactCard(profile),
                   
-                  const SizedBox(height: 20),
+                  SizedBox(height: ProfileViewTheme.cardSpacing),
                   
                   // Card con información del rol y estado
                   _buildRoleStatusCard(profile),
                   
-                  const SizedBox(height: 20),
+                  SizedBox(height: ProfileViewTheme.cardSpacing),
                   
                   // Botones de acción
                   _buildActionButtons(profile),
@@ -77,102 +78,71 @@ class _ProfileViewState extends State<ProfileView> {
   // Card principal con avatar y información básica
   Widget _buildProfileCard(Profile profile) {
     return Card(
-      elevation: 8,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(20.0),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(24.0),
-        child: Column(
-          children: [
-            // Avatar circular con iniciales
-            Container(
-              width: 100,
-              height: 100,
-              decoration: BoxDecoration(
-                color: _getRoleColor(profile.rolUsuario),
-                borderRadius: BorderRadius.circular(50.0),
-                boxShadow: [
-                  BoxShadow(
-                    color: _getRoleColor(profile.rolUsuario).withValues(alpha: 0.3),
-                    blurRadius: 20,
-                    spreadRadius: 5,
-                  ),
-                ],
-              ),
-              child: Center(
-                child: Text(
-                  profile.initials,
-                  style: const TextStyle(
-                    fontSize: 36,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
+      elevation: ProfileViewTheme.profileCardElevation,
+      shape: ProfileViewTheme.profileCardShape,
+      child: Container(
+        decoration: ProfileViewTheme.profileCardDecoration,
+        child: Padding(
+          padding: ProfileViewTheme.profileCardPadding,
+          child: Column(
+            children: [
+              // Avatar circular con iniciales
+              Container(
+                width: ProfileViewTheme.avatarSize,
+                height: ProfileViewTheme.avatarSize,
+                decoration: ProfileViewTheme.avatarDecoration(_getRoleColor(profile.rolUsuario)),
+                child: Center(
+                  child: Text(
+                    profile.initials,
+                    style: ProfileViewTheme.avatarTextStyle,
                   ),
                 ),
               ),
-            ),
-            
-            const SizedBox(height: 20),
-            
-            // Nombre del usuario
-            Text(
-              profile.formattedName,
-              style: const TextStyle(
-                fontSize: 28,
-                fontWeight: FontWeight.bold,
+              
+              SizedBox(height: ProfileViewTheme.nameSpacing),
+              
+              // Nombre del usuario
+              Text(
+                profile.formattedName,
+                style: ProfileViewTheme.nameStyle,
+                textAlign: TextAlign.center,
               ),
-              textAlign: TextAlign.center,
-            ),
-            
-            const SizedBox(height: 8),
-            
-            // Email del usuario
-            Text(
-              profile.emailUsuario,
-              style: TextStyle(
-                fontSize: 16,
-                color: Colors.grey[600],
+              
+              SizedBox(height: ProfileViewTheme.emailSpacing),
+              
+              // Email del usuario
+              Text(
+                profile.emailUsuario,
+                style: ProfileViewTheme.emailStyle,
+                textAlign: TextAlign.center,
               ),
-              textAlign: TextAlign.center,
-            ),
-            
-            const SizedBox(height: 16),
-            
-            // Estado del usuario
-            Container(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 16.0,
-                vertical: 8.0,
-              ),
-              decoration: BoxDecoration(
-                color: _getStatusColor(profile.estUsuario).withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(12.0),
-                border: Border.all(
-                  color: _getStatusColor(profile.estUsuario),
-                  width: 2,
-                ),
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(
-                    _getStatusIcon(profile.estUsuario),
-                    color: _getStatusColor(profile.estUsuario),
-                    size: 16,
-                  ),
-                  const SizedBox(width: 6),
-                  Text(
-                    profile.statusDescription.toUpperCase(),
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.bold,
+              
+              SizedBox(height: ProfileViewTheme.statusSpacing),
+              
+              // Estado del usuario
+              Container(
+                padding: ProfileViewTheme.statusPadding,
+                decoration: ProfileViewTheme.statusDecoration(_getStatusColor(profile.estUsuario)),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      _getStatusIcon(profile.estUsuario),
                       color: _getStatusColor(profile.estUsuario),
+                      size: ProfileViewTheme.statusIconSize,
                     ),
-                  ),
-                ],
+                    SizedBox(width: ProfileViewTheme.statusIconSpacing),
+                    Text(
+                      profile.statusDescription.toUpperCase(),
+                      style: ProfileViewTheme.statusTextStyle.copyWith(
+                        color: _getStatusColor(profile.estUsuario),
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -181,53 +151,51 @@ class _ProfileViewState extends State<ProfileView> {
   // Card con información de contacto
   Widget _buildContactCard(Profile profile) {
     return Card(
-      elevation: 4,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16.0),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Icon(
-                  Icons.contact_mail,
-                  color: Colors.blue[600],
-                  size: 24,
-                ),
-                const SizedBox(width: 12),
-                const Text(
-                  'INFORMACIÓN DE CONTACTO',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
+      elevation: ProfileViewTheme.contactCardElevation,
+      shape: ProfileViewTheme.contactCardShape,
+      child: Container(
+        decoration: ProfileViewTheme.contactCardDecoration,
+        child: Padding(
+          padding: ProfileViewTheme.contactCardPadding,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Icon(
+                    Icons.contact_mail,
+                    color: ProfileViewTheme.contactHeaderColor,
+                    size: ProfileViewTheme.contactHeaderIconSize,
                   ),
-                ),
-              ],
-            ),
-            
-            const SizedBox(height: 20),
-            
-            // Email
-            _buildInfoRow(
-              Icons.email,
-              'Email',
-              profile.emailUsuario,
-              Colors.blue,
-            ),
-            
-            const SizedBox(height: 16),
-            
-            // Teléfono
-            _buildInfoRow(
-              Icons.phone,
-              'Teléfono',
-              profile.formattedPhone,
-              profile.hasPhone ? Colors.green : Colors.grey,
-            ),
-          ],
+                  SizedBox(width: ProfileViewTheme.contactHeaderSpacing),
+                  Text(
+                    'INFORMACIÓN DE CONTACTO',
+                    style: ProfileViewTheme.contactHeaderStyle,
+                  ),
+                ],
+              ),
+              
+              SizedBox(height: ProfileViewTheme.contactSectionSpacing),
+              
+              // Email
+              _buildInfoRow(
+                Icons.email,
+                'Email',
+                profile.emailUsuario,
+                ProfileViewTheme.emailColor,
+              ),
+              
+              SizedBox(height: ProfileViewTheme.contactInfoSpacing),
+              
+              // Teléfono
+              _buildInfoRow(
+                Icons.phone,
+                'Teléfono',
+                profile.formattedPhone,
+                profile.hasPhone ? ProfileViewTheme.phoneColor : ProfileViewTheme.phoneDisabledColor,
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -236,48 +204,46 @@ class _ProfileViewState extends State<ProfileView> {
   // Card con información de rol y estado
   Widget _buildRoleStatusCard(Profile profile) {
     return Card(
-      elevation: 4,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16.0),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Icon(
-                  Icons.admin_panel_settings,
-                  color: Colors.purple[600],
-                  size: 24,
-                ),
-                const SizedBox(width: 12),
-                const Text(
-                  'ROL Y PERMISOS',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
+      elevation: ProfileViewTheme.roleCardElevation,
+      shape: ProfileViewTheme.roleCardShape,
+      child: Container(
+        decoration: ProfileViewTheme.roleCardDecoration,
+        child: Padding(
+          padding: ProfileViewTheme.roleCardPadding,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Icon(
+                    Icons.admin_panel_settings,
+                    color: ProfileViewTheme.roleHeaderColor,
+                    size: ProfileViewTheme.roleHeaderIconSize,
                   ),
-                ),
-              ],
-            ),
-            
-            const SizedBox(height: 20),
-            
-            // Rol
-            _buildInfoRow(
-              _getRoleIcon(profile.rolUsuario),
-              'Rol',
-              profile.roleDescription,
-              _getRoleColor(profile.rolUsuario),
-            ),
-            
-            const SizedBox(height: 16),
-            
-            // Permisos
-            _buildPermissionsSection(profile),
-          ],
+                  SizedBox(width: ProfileViewTheme.roleHeaderSpacing),
+                  Text(
+                    'ROL Y PERMISOS',
+                    style: ProfileViewTheme.roleHeaderStyle,
+                  ),
+                ],
+              ),
+              
+              SizedBox(height: ProfileViewTheme.roleSectionSpacing),
+              
+              // Rol
+              _buildInfoRow(
+                _getRoleIcon(profile.rolUsuario),
+                'Rol',
+                profile.roleDescription,
+                _getRoleColor(profile.rolUsuario),
+              ),
+              
+              SizedBox(height: ProfileViewTheme.roleInfoSpacing),
+              
+              // Permisos
+              _buildPermissionsSection(profile),
+            ],
+          ),
         ),
       ),
     );
@@ -286,37 +252,28 @@ class _ProfileViewState extends State<ProfileView> {
   // Widget para mostrar filas de información
   Widget _buildInfoRow(IconData icon, String label, String value, Color color) {
     return Container(
-      padding: const EdgeInsets.all(12.0),
-      decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(8.0),
-      ),
+      padding: ProfileViewTheme.infoRowPadding,
+      decoration: ProfileViewTheme.infoRowDecoration(color),
       child: Row(
         children: [
           Icon(
             icon,
             color: color,
-            size: 20,
+            size: ProfileViewTheme.infoRowIconSize,
           ),
-          const SizedBox(width: 12),
+          SizedBox(width: ProfileViewTheme.infoRowIconSpacing),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   label,
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: Colors.grey[600],
-                    fontWeight: FontWeight.w500,
-                  ),
+                  style: ProfileViewTheme.infoRowLabelStyle,
                 ),
-                const SizedBox(height: 2),
+                SizedBox(height: ProfileViewTheme.infoRowLabelSpacing),
                 Text(
                   value,
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
+                  style: ProfileViewTheme.infoRowValueStyle.copyWith(
                     color: color,
                   ),
                 ),
@@ -350,37 +307,19 @@ class _ProfileViewState extends State<ProfileView> {
       children: [
         Text(
           'Permisos:',
-          style: TextStyle(
-            fontSize: 12,
-            color: Colors.grey[600],
-            fontWeight: FontWeight.w500,
-          ),
+          style: ProfileViewTheme.permissionLabelStyle,
         ),
-        const SizedBox(height: 8),
+        SizedBox(height: ProfileViewTheme.permissionSpacing),
         Wrap(
-          spacing: 8,
-          runSpacing: 8,
+          spacing: ProfileViewTheme.permissionSpacing,
+          runSpacing: ProfileViewTheme.permissionSpacing,
           children: permissions.map((permission) {
             return Container(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 12.0,
-                vertical: 6.0,
-              ),
-              decoration: BoxDecoration(
-                color: Colors.indigo.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(12.0),
-                border: Border.all(
-                  color: Colors.indigo.withValues(alpha: 0.3),
-                  width: 1,
-                ),
-              ),
+              padding: ProfileViewTheme.permissionChipPadding,
+              decoration: ProfileViewTheme.permissionChipDecoration,
               child: Text(
                 permission,
-                style: const TextStyle(
-                  fontSize: 12,
-                  color: Colors.indigo,
-                  fontWeight: FontWeight.w600,
-                ),
+                style: ProfileViewTheme.permissionChipTextStyle,
               ),
             );
           }).toList(),
@@ -398,50 +337,38 @@ class _ProfileViewState extends State<ProfileView> {
           width: double.infinity,
           child: ElevatedButton.icon(
             onPressed: () {
-              
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Edición de perfil próximamente'),
+                SnackBar(
+                  content: const Text('Edición de perfil próximamente'),
+                  backgroundColor: ProfileViewTheme.primaryOrangeShade600,
+                  behavior: SnackBarBehavior.floating,
                 ),
               );
             },
             icon: const Icon(Icons.edit),
-            label: const Text('Editar Perfil'),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.orange,
-              foregroundColor: Colors.white,
-              padding: const EdgeInsets.symmetric(vertical: 16),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-            ),
+            label: Text('Editar Perfil', style: ProfileViewTheme.primaryButtonTextStyle),
+            style: ProfileViewTheme.primaryButtonStyle,
           ),
         ),
         
-        const SizedBox(height: 12),
+        SizedBox(height: ProfileViewTheme.buttonSpacing),
         
         // Botón para cambiar contraseña
         SizedBox(
           width: double.infinity,
           child: OutlinedButton.icon(
             onPressed: () {
-              
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Cambio de contraseña próximamente'),
+                SnackBar(
+                  content: const Text('Cambio de contraseña próximamente'),
+                  backgroundColor: ProfileViewTheme.primaryOrangeShade600,
+                  behavior: SnackBarBehavior.floating,
                 ),
               );
             },
             icon: const Icon(Icons.lock),
-            label: const Text('Cambiar Contraseña'),
-            style: OutlinedButton.styleFrom(
-              foregroundColor: Colors.orange,
-              side: const BorderSide(color: Colors.orange),
-              padding: const EdgeInsets.symmetric(vertical: 16),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-            ),
+            label: Text('Cambiar Contraseña', style: ProfileViewTheme.secondaryButtonTextStyle),
+            style: ProfileViewTheme.secondaryButtonStyle,
           ),
         ),
       ],
@@ -452,34 +379,27 @@ class _ProfileViewState extends State<ProfileView> {
   Widget _buildErrorView(Object? error) {
     return Center(
       child: Padding(
-        padding: const EdgeInsets.all(32.0),
+        padding: ProfileViewTheme.errorPadding,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(
               Icons.error_outline,
-              size: 80,
-              color: Colors.red[300],
+              size: ProfileViewTheme.errorIconSize,
+              color: ProfileViewTheme.errorIconColor,
             ),
-            const SizedBox(height: 24),
+            SizedBox(height: ProfileViewTheme.errorSpacing),
             Text(
               'Error al cargar el perfil',
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: Colors.red[600],
-              ),
+              style: ProfileViewTheme.errorTitleStyle,
             ),
-            const SizedBox(height: 12),
+            SizedBox(height: ProfileViewTheme.errorDescriptionSpacing),
             Text(
               '$error',
               textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 16,
-                color: Colors.red[500],
-              ),
+              style: ProfileViewTheme.errorDescriptionStyle,
             ),
-            const SizedBox(height: 24),
+            SizedBox(height: ProfileViewTheme.errorButtonSpacing),
             ElevatedButton.icon(
               onPressed: () {
                 setState(() {
@@ -490,9 +410,12 @@ class _ProfileViewState extends State<ProfileView> {
               icon: const Icon(Icons.refresh),
               label: const Text('Reintentar'),
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.orange,
-                foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                backgroundColor: ProfileViewTheme.primaryButtonColor,
+                foregroundColor: ProfileViewTheme.primaryButtonTextColor,
+                padding: ProfileViewTheme.errorButtonPadding,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(ProfileViewTheme.buttonBorderRadius),
+                ),
               ),
             ),
           ],
@@ -505,18 +428,18 @@ class _ProfileViewState extends State<ProfileView> {
   Color _getRoleColor(String role) {
     switch (role.toUpperCase()) {
       case 'ADMIN':
-        return Colors.red;
+        return ProfileViewTheme.adminRoleColor;
       case 'MANAGER':
-        return Colors.purple;
+        return ProfileViewTheme.managerRoleColor;
       case 'WAITER':
-        return Colors.blue;
+        return ProfileViewTheme.waiterRoleColor;
       case 'CHEF':
-        return Colors.orange;
+        return ProfileViewTheme.chefRoleColor;
       case 'CUSTOMER':
       case 'USER':
-        return Colors.green;
+        return ProfileViewTheme.customerRoleColor;
       default:
-        return Colors.grey;
+        return ProfileViewTheme.defaultRoleColor;
     }
   }
 
@@ -543,15 +466,15 @@ class _ProfileViewState extends State<ProfileView> {
   Color _getStatusColor(String status) {
     switch (status.toUpperCase()) {
       case 'ACTIVO':
-        return Colors.green;
+        return ProfileViewTheme.activeStatusColor;
       case 'INACTIVO':
-        return Colors.grey;
+        return ProfileViewTheme.inactiveStatusColor;
       case 'SUSPENDIDO':
-        return Colors.orange;
+        return ProfileViewTheme.suspendedStatusColor;
       case 'BLOQUEADO':
-        return Colors.red;
+        return ProfileViewTheme.blockedStatusColor;
       default:
-        return Colors.grey;
+        return ProfileViewTheme.defaultStatusColor;
     }
   }
 
