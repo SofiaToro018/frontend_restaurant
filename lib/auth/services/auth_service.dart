@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/usuario.dart';
+import '../models/register.dart';
 
 /// Estados de autenticación
 enum AuthState {
@@ -312,6 +313,101 @@ class AuthService {
         print('Error actualizando usuario: $e');
       }
       return AuthResult.error('Error de conexión');
+    }
+  }
+
+  /// Registra un nuevo usuario
+  Future<RegisterResponse> registerUser(RegisterRequest registerRequest) async {
+    try {
+      // Usar la misma configuración que el resto del servicio
+      final url = Uri.parse('$apiUrl/usuario-service/usuario');
+
+      if (kDebugMode) {
+        print('Registrando usuario en: $url');
+        print('Datos del registro: ${registerRequest.toJson()}');
+      }
+
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+        body: jsonEncode(registerRequest.toJson()),
+      );
+
+      if (kDebugMode) {
+        print('Status Code: ${response.statusCode}');
+        print('Response Body: ${response.body}');
+      }
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        // Registro exitoso
+        try {
+          final responseData = jsonDecode(response.body);
+          // Opcional: crear objeto Usuario si el servidor lo devuelve
+          Usuario? usuario;
+          if (responseData is Map<String, dynamic>) {
+            usuario = Usuario.fromJson(responseData);
+          }
+          
+          return RegisterResponse.success(
+            message: '¡Registro exitoso! Redirigiendo al login...',
+            usuario: usuario,
+          );
+        } catch (e) {
+          // Si hay error parseando la respuesta, pero el status es exitoso
+          return RegisterResponse.success();
+        }
+      } else {
+        // Error del servidor
+        String errorMessage = 'Error en el registro';
+        
+        try {
+          final errorData = jsonDecode(response.body);
+          if (errorData is Map<String, dynamic>) {
+            if (errorData.containsKey('message')) {
+              errorMessage = errorData['message'];
+            } else if (errorData.containsKey('error')) {
+              errorMessage = errorData['error'];
+            } else if (errorData.containsKey('details')) {
+              errorMessage = errorData['details'];
+            }
+          }
+        } catch (e) {
+          // Si no se puede parsear el error, usar mensaje genérico
+          switch (response.statusCode) {
+            case 400:
+              errorMessage = 'Datos inválidos. Verifica la información ingresada.';
+              break;
+            case 409:
+              errorMessage = 'Este email ya está registrado. Intenta con otro.';
+              break;
+            case 500:
+              errorMessage = 'Error interno del servidor. Inténtalo más tarde.';
+              break;
+            default:
+              errorMessage = 'Error en el registro. Código: ${response.statusCode}';
+          }
+        }
+        
+        return RegisterResponse.error(errorMessage);
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print('Error registrando usuario: $e');
+      }
+      
+      // Determinar tipo de error
+      String errorMessage = 'Error de conexión. Verifica tu internet.';
+      if (e.toString().contains('SocketException') || 
+          e.toString().contains('NetworkException')) {
+        errorMessage = 'Sin conexión a internet. Verifica tu conexión.';
+      } else if (e.toString().contains('TimeoutException')) {
+        errorMessage = 'Tiempo de espera agotado. Inténtalo de nuevo.';
+      }
+      
+      return RegisterResponse.error(errorMessage);
     }
   }
 }
