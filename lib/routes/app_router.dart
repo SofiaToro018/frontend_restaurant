@@ -16,13 +16,13 @@ import '../views/splash_intro/splash_intro_view.dart';
 final GoRouter appRouter = GoRouter(
   // TODO: TEMPORAL - Cambiar de vuelta a '/splash' después del desarrollo
   // ORIGINAL: initialLocation: '/splash',
-  initialLocation: '/menu', // TEMPORAL para desarrollo
+  initialLocation: '/splash', // TEMPORAL para desarrollo
   routes: [
     // TODO: TEMPORAL - Cambiar de vuelta a '/splash' después del desarrollo  
     // ORIGINAL: redirect: (context, state) => '/splash',
     GoRoute(
       path: '/',
-      redirect: (context, state) => '/menu', // TEMPORAL para desarrollo
+      redirect: (context, state) => '/splash', // TEMPORAL para desarrollo
     ),
     
     // Ruta de bienvenida (splash intro)
