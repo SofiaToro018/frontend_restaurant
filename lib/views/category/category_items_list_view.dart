@@ -60,34 +60,113 @@ class _CategoryItemsListViewState extends State<CategoryItemsListView> {
                               shape: CategoryItemsListViewTheme.categoryCardShape,
                               child: Container(
                                 decoration: CategoryItemsListViewTheme.categoryCardDecoration,
-                                child: Padding(
-                                  padding: CategoryItemsListViewTheme.categoryCardPadding,
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      // Ícono de la categoría
-                                      Icon(
-                                        _getCategoryIcon(category.nombre),
-                                        size: CategoryItemsListViewTheme.categoryIconSize,
-                                        color: CategoryItemsListViewTheme.categoryIconColor,
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(CategoryItemsListViewTheme.categoryCardBorderRadius),
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      image: category.imgCatMenu.isNotEmpty
+                                          ? DecorationImage(
+                                              image: NetworkImage(category.imgCatMenu),
+                                              fit: BoxFit.cover,
+                                              colorFilter: const ColorFilter.mode(
+                                                Color(0x66000000),
+                                                BlendMode.darken,
+                                              ),
+                                            )
+                                          : null,
+                                      gradient: category.imgCatMenu.isEmpty
+                                          ? const LinearGradient(
+                                              begin: Alignment.topLeft,
+                                              end: Alignment.bottomRight,
+                                              colors: [
+                                                Color(0x1A2E7D32),
+                                                Color(0x332E7D32),
+                                              ],
+                                            )
+                                          : null,
+                                    ),
+                                    child: Container(
+                                      decoration: const BoxDecoration(
+                                        gradient: LinearGradient(
+                                          begin: Alignment.topCenter,
+                                          end: Alignment.bottomCenter,
+                                          colors: [
+                                            Colors.transparent,
+                                            Color(0x4D000000),
+                                          ],
+                                        ),
                                       ),
-                                      SizedBox(height: CategoryItemsListViewTheme.categoryCardSpacing),
+                                      child: Padding(
+                                        padding: CategoryItemsListViewTheme.categoryCardPadding,
+                                        child: Column(
+                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          children: [
+                                            // Ícono de la categoría con fondo circular
+                                            Container(
+                                              padding: const EdgeInsets.all(16),
+                                              decoration: const BoxDecoration(
+                                                color: Color.fromARGB(0, 255, 255, 255),
+                                                shape: BoxShape.circle,
+                                                boxShadow: [
+                                                  BoxShadow(
+                                                    color: Color.fromARGB(51, 221, 212, 212),
+                                                    blurRadius: 8,
+                                                    offset: Offset(0, 2),
+                                                  ),
+                                                ],
+                                              ),
+                                              child: Icon(
+                                                _getCategoryIcon(category.nombre),
+                                                size: CategoryItemsListViewTheme.categoryIconSize,
+                                                color: Colors.white,
+                                              ),
+                                            ),
+                                            SizedBox(height: CategoryItemsListViewTheme.categoryCardSpacing),
 
-                                      // Nombre de la categoría
-                                      Text(
-                                        category.nombre.toUpperCase(),
-                                        style: CategoryItemsListViewTheme.categoryTitleStyle,
-                                        textAlign: TextAlign.center,
-                                      ),
-                                      const SizedBox(height: 8),
+                                            // Nombre de la categoría con fondo sólido
+                                            Container(
+                                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                                              decoration: BoxDecoration(
+                                                color: const Color.fromARGB(0, 255, 255, 255),
+                                                borderRadius: BorderRadius.circular(12),
+                                                boxShadow: const [
+                                                  BoxShadow(
+                                                    color: Color(0x1A000000),
+                                                    blurRadius: 4,
+                                                    offset: Offset(0, 2),
+                                                  ),
+                                                ],
+                                              ),
+                                              child: Text(
+                                                category.nombre.toUpperCase(),
+                                                style: CategoryItemsListViewTheme.categoryTitleStyle.copyWith(
+                                                  color: Colors.white,
+                                                ),
+                                                textAlign: TextAlign.center,
+                                              ),
+                                            ),
+                                            const SizedBox(height: 8),
 
-                                      // Información de items
-                                      Text(
-                                        '${category.itemsMenu.length} items para escoger',
-                                        style: CategoryItemsListViewTheme.categorySubtitleStyle,
-                                        textAlign: TextAlign.center,
+                                            // Información de items con fondo sólido
+                                            Container(
+                                              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                                              decoration: BoxDecoration(
+                                                color: const Color.fromARGB(0, 255, 255, 255),
+                                                borderRadius: BorderRadius.circular(8),
+                                              ),
+                                              child: Text(
+                                                '${category.itemsMenu.length} items para escoger',
+                                                style: CategoryItemsListViewTheme.categorySubtitleStyle.copyWith(
+                                                  color: Colors.white,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                                textAlign: TextAlign.center,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
                                       ),
-                                    ],
+                                    ),
                                   ),
                                 ),
                               ),
