@@ -41,13 +41,13 @@ class CustomBottomNavbar extends StatelessWidget {
                   children: [
                     Icon(
                       Icons.restaurant_menu,
-                      color: currentRoute == '/menu' ? Colors.orange : Colors.grey,
+                      color: currentRoute == '/menu' ? Colors.green : Colors.grey,
                     ),
                     const SizedBox(height: 4),
                     Text(
                       'Menú',
                       style: TextStyle(
-                        color: currentRoute == '/menu' ? Colors.orange : Colors.grey,
+                        color: currentRoute == '/menu' ? Colors.green : Colors.grey,
                       ),
                     ),
                   ],
@@ -69,13 +69,13 @@ class CustomBottomNavbar extends StatelessWidget {
                   children: [
                     Icon(
                       Icons.event_seat,
-                      color: currentRoute == '/bookings' ? Colors.orange : Colors.grey,
+                      color: currentRoute == '/bookings' ? Colors.green : Colors.grey,
                     ),
                     const SizedBox(height: 4),
                     Text(
                       'Reservas',
                       style: TextStyle(
-                        color: currentRoute == '/bookings' ? Colors.orange : Colors.grey,
+                        color: currentRoute == '/bookings' ? Colors.green : Colors.grey,
                       ),
                     ),
                   ],
@@ -97,13 +97,13 @@ class CustomBottomNavbar extends StatelessWidget {
                   children: [
                     Icon(
                       Icons.account_circle,
-                      color: currentRoute == '/profile' ? Colors.orange : Colors.grey,
+                      color: currentRoute == '/profile' ? Colors.green : Colors.grey,
                     ),
                     const SizedBox(height: 4),
                     Text(
                       'Perfil',
                       style: TextStyle(
-                        color: currentRoute == '/profile' ? Colors.orange : Colors.grey,
+                        color: currentRoute == '/profile' ? Colors.green : Colors.grey,
                       ),
                     ),
                   ],

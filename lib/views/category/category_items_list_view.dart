@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../../models/category.dart';
 import '../../services/category_service.dart';
 import '../../themes/category_theme/category_items_list_view_theme.dart';
+import '../../utils/currency_formatter.dart';
 
 class CategoryItemsListView extends StatefulWidget {
   final String categoryId;
@@ -42,80 +43,174 @@ class _CategoryItemsListViewState extends State<CategoryItemsListView> {
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             final category = snapshot.data!; // Se obtiene el detalle de la categoría
-            return SingleChildScrollView(
-              padding: CategoryItemsListViewTheme.mainPadding,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Card con información de la categoría (COMPLETAMENTE CENTRADO)
-                  Center(
-                    child: Container(
-                      margin: CategoryItemsListViewTheme.categoryCardMargin,
-                      child: Card(
-                        elevation: CategoryItemsListViewTheme.categoryCardElevation,
-                        shape: CategoryItemsListViewTheme.categoryCardShape,
-                        child: Container(
-                          decoration: CategoryItemsListViewTheme.categoryCardDecoration,
-                          child: Padding(
-                            padding: CategoryItemsListViewTheme.categoryCardPadding,
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                // Ícono de la categoría
-                                Icon(
-                                  _getCategoryIcon(category.nombre),
-                                  size: CategoryItemsListViewTheme.categoryIconSize,
-                                  color: CategoryItemsListViewTheme.categoryIconColor,
-                                ),
-                                SizedBox(height: CategoryItemsListViewTheme.categoryCardSpacing),
+            return CustomScrollView(
+              slivers: [
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: CategoryItemsListViewTheme.mainPadding,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Card con información de la categoría (COMPLETAMENTE CENTRADO)
+                        Center(
+                          child: Container(
+                            margin: CategoryItemsListViewTheme.categoryCardMargin,
+                            child: Card(
+                              elevation: CategoryItemsListViewTheme.categoryCardElevation,
+                              shape: CategoryItemsListViewTheme.categoryCardShape,
+                              child: Container(
+                                decoration: CategoryItemsListViewTheme.categoryCardDecoration,
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(CategoryItemsListViewTheme.categoryCardBorderRadius),
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      image: category.imgCatMenu.isNotEmpty
+                                          ? DecorationImage(
+                                              image: NetworkImage(category.imgCatMenu),
+                                              fit: BoxFit.cover,
+                                              colorFilter: const ColorFilter.mode(
+                                                Color(0x66000000),
+                                                BlendMode.darken,
+                                              ),
+                                            )
+                                          : null,
+                                      gradient: category.imgCatMenu.isEmpty
+                                          ? const LinearGradient(
+                                              begin: Alignment.topLeft,
+                                              end: Alignment.bottomRight,
+                                              colors: [
+                                                Color(0x1A2E7D32),
+                                                Color(0x332E7D32),
+                                              ],
+                                            )
+                                          : null,
+                                    ),
+                                    child: Container(
+                                      decoration: const BoxDecoration(
+                                        gradient: LinearGradient(
+                                          begin: Alignment.topCenter,
+                                          end: Alignment.bottomCenter,
+                                          colors: [
+                                            Colors.transparent,
+                                            Color(0x4D000000),
+                                          ],
+                                        ),
+                                      ),
+                                      child: Padding(
+                                        padding: CategoryItemsListViewTheme.categoryCardPadding,
+                                        child: Column(
+                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          children: [
+                                            // Ícono de la categoría con fondo circular
+                                            Container(
+                                              padding: const EdgeInsets.all(16),
+                                              decoration: const BoxDecoration(
+                                                color: Color.fromARGB(0, 255, 255, 255),
+                                                shape: BoxShape.circle,
+                                                boxShadow: [
+                                                  BoxShadow(
+                                                    color: Color.fromARGB(51, 221, 212, 212),
+                                                    blurRadius: 8,
+                                                    offset: Offset(0, 2),
+                                                  ),
+                                                ],
+                                              ),
+                                              child: Icon(
+                                                _getCategoryIcon(category.nombre),
+                                                size: CategoryItemsListViewTheme.categoryIconSize,
+                                                color: Colors.white,
+                                              ),
+                                            ),
+                                            SizedBox(height: CategoryItemsListViewTheme.categoryCardSpacing),
 
-                                // Nombre de la categoría
-                                Text(
-                                  category.nombre.toUpperCase(),
-                                  style: CategoryItemsListViewTheme.categoryTitleStyle,
-                                  textAlign: TextAlign.center,
-                                ),
-                                const SizedBox(height: 8),
+                                            // Nombre de la categoría con fondo sólido
+                                            Container(
+                                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                                              decoration: BoxDecoration(
+                                                color: const Color.fromARGB(0, 255, 255, 255),
+                                                borderRadius: BorderRadius.circular(12),
+                                                boxShadow: const [
+                                                  BoxShadow(
+                                                    color: Color(0x1A000000),
+                                                    blurRadius: 4,
+                                                    offset: Offset(0, 2),
+                                                  ),
+                                                ],
+                                              ),
+                                              child: Text(
+                                                category.nombre.toUpperCase(),
+                                                style: CategoryItemsListViewTheme.categoryTitleStyle.copyWith(
+                                                  color: Colors.white,
+                                                ),
+                                                textAlign: TextAlign.center,
+                                              ),
+                                            ),
+                                            const SizedBox(height: 8),
 
-                                // Información de items
-                                Text(
-                                  '${category.itemsMenu.length} items en esta categoría',
-                                  style: CategoryItemsListViewTheme.categorySubtitleStyle,
-                                  textAlign: TextAlign.center,
+                                            // Información de items con fondo sólido
+                                            Container(
+                                              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                                              decoration: BoxDecoration(
+                                                color: const Color.fromARGB(0, 255, 255, 255),
+                                                borderRadius: BorderRadius.circular(8),
+                                              ),
+                                              child: Text(
+                                                '${category.itemsMenu.length} items para escoger',
+                                                style: CategoryItemsListViewTheme.categorySubtitleStyle.copyWith(
+                                                  color: Colors.white,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                                textAlign: TextAlign.center,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ),
                                 ),
-                              ],
+                              ),
                             ),
                           ),
                         ),
-                      ),
+
+                        SizedBox(height: CategoryItemsListViewTheme.sectionSpacing),
+
+                        // Título de la sección
+                        if (category.itemsMenu.isNotEmpty) ...[
+                          const Text(
+                            'Items del Menú',
+                            style: CategoryItemsListViewTheme.itemsSectionTitleStyle,
+                          ),
+                          SizedBox(height: CategoryItemsListViewTheme.itemsSectionTitleSpacing),
+                        ],
+                      ],
                     ),
                   ),
+                ),
 
-                  SizedBox(height: CategoryItemsListViewTheme.sectionSpacing),
-
-                  // Lista de items en GRID 2x2
-                  if (category.itemsMenu.isNotEmpty) ...[
-                    const Text(
-                      'Items del Menú',
-                      style: CategoryItemsListViewTheme.itemsSectionTitleStyle,
-                    ),
-                    SizedBox(height: CategoryItemsListViewTheme.itemsSectionTitleSpacing),
-                    GridView.builder(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
+                // Lista de items en GRID usando SliverGrid
+                if (category.itemsMenu.isNotEmpty)
+                  SliverPadding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                    sliver: SliverGrid(
                       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: CategoryItemsListViewTheme.gridCrossAxisCount,
                         crossAxisSpacing: CategoryItemsListViewTheme.gridCrossAxisSpacing,
                         mainAxisSpacing: CategoryItemsListViewTheme.gridMainAxisSpacing,
                         childAspectRatio: CategoryItemsListViewTheme.gridChildAspectRatio,
                       ),
-                      itemCount: category.itemsMenu.length,
-                      itemBuilder: (context, index) {
-                        return _buildItemCard(category.itemsMenu[index]);
-                      },
+                      delegate: SliverChildBuilderDelegate(
+                        (context, index) {
+                          return _buildItemCard(category.itemsMenu[index]);
+                        },
+                        childCount: category.itemsMenu.length,
+                      ),
                     ),
-                  ] else ...[
-                    Container(
+                  )
+                else
+                  SliverToBoxAdapter(
+                    child: Container(
                       padding: CategoryItemsListViewTheme.emptyViewPadding,
                       child: Center(
                         child: Column(
@@ -135,9 +230,13 @@ class _CategoryItemsListViewState extends State<CategoryItemsListView> {
                         ),
                       ),
                     ),
-                  ],
-                ],
-              ),
+                  ),
+
+                // Añadir un poco de espacio al final para mejorar el scroll
+                const SliverToBoxAdapter(
+                  child: SizedBox(height: 16),
+                ),
+              ],
             );
           } else if (snapshot.hasError) {
             return Center(
@@ -172,6 +271,7 @@ class _CategoryItemsListViewState extends State<CategoryItemsListView> {
                 : null,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
               children: [
                 // Imagen del plato (parte superior)
                 ClipRRect(
@@ -194,7 +294,7 @@ class _CategoryItemsListViewState extends State<CategoryItemsListView> {
                               return const Center(
                                 child: CircularProgressIndicator(
                                   strokeWidth: 2,
-                                  valueColor: AlwaysStoppedAnimation<Color>(Colors.orange),
+                                  valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF2E7D32)),
                                 ),
                               );
                             },
@@ -204,11 +304,12 @@ class _CategoryItemsListViewState extends State<CategoryItemsListView> {
                 ),
                 
                 // Contenido de la tarjeta
-                Expanded(
+                Flexible(
                   child: Padding(
                     padding: CategoryItemsListViewTheme.itemCardPadding,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
                       children: [
                         // Estado "No disponible" si aplica
                         if (!item.estItem)
@@ -238,28 +339,34 @@ class _CategoryItemsListViewState extends State<CategoryItemsListView> {
                         
                         // Descripción
                         if (item.descItem.isNotEmpty)
-                          Text(
-                            item.descItem,
-                            style: CategoryItemsListViewTheme.itemDescriptionStyle,
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
+                          Flexible(
+                            child: Text(
+                              item.descItem,
+                              style: CategoryItemsListViewTheme.itemDescriptionStyle,
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                            ),
                           ),
                         
-                        const Spacer(),
+                        const SizedBox(height: 8), // Reemplaza el Spacer con un espaciado fijo
                         
                         // Precio y botón
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             Expanded(
                               child: Text(
-                                '\$${item.precItem.toStringAsFixed(0)}',
+                                CurrencyFormatter.formatColombianPrice(item.precItem),
                                 style: item.estItem 
                                   ? CategoryItemsListViewTheme.itemPriceStyle
                                   : CategoryItemsListViewTheme.itemPriceDisabledStyle,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
                               ),
                             ),
-                            if (item.estItem)
+                            if (item.estItem) ...[
+                              const SizedBox(width: 8),
                               Container(
                                 padding: CategoryItemsListViewTheme.addButtonPadding,
                                 decoration: CategoryItemsListViewTheme.addButtonDecoration,
@@ -269,6 +376,7 @@ class _CategoryItemsListViewState extends State<CategoryItemsListView> {
                                   color: CategoryItemsListViewTheme.addButtonIconColor,
                                 ),
                               ),
+                            ],
                           ],
                         ),
                       ],

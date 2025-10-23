@@ -2,22 +2,22 @@ import 'package:flutter/material.dart';
 
 class ItemDetailViewTheme {
   // ========== PALETA DE COLORES CONSISTENTE ==========
-  static const Color primaryOrange = Color(0xFFFF6B35);
-  static const Color primaryOrangeLight = Color(0xFFFFE5D9);
-  static const Color primaryOrangeDark = Color(0xFFE55A2B);
-  static const Color primaryOrangeShade50 = Color(0xFFFFF3F0);
-  static const Color primaryOrangeShade100 = Color(0xFFFFE0D1);
-  static const Color primaryOrangeShade600 = Color(0xFFE55A2B);
-  static const Color primaryOrangeShade700 = Color(0xFFCC4A1F);
-  static const Color primaryOrangeShade800 = Color(0xFFB23F1A);
-  static const Color primaryOrangeShade900 = Color(0xFF993316);
+  static const Color primaryOrange = Color(0xFF2E7D32); // Verde medio
+  static const Color primaryOrangeLight = Color(0xFFE8F5E8); // Verde muy claro
+  static const Color primaryOrangeDark = Color(0xFF1B5E20); // Verde oscuro
+  static const Color primaryOrangeShade50 = Color(0xFFF1F8E9);
+  static const Color primaryOrangeShade100 = Color(0xFFE8F5E8);
+  static const Color primaryOrangeShade600 = Color(0xFF2E7D32);
+  static const Color primaryOrangeShade700 = Color(0xFF1B5E20);
+  static const Color primaryOrangeShade800 = Color(0xFF2E7D32);
+  static const Color primaryOrangeShade900 = Color(0xFF1B5E20);
   
   static const Color textPrimary = Color(0xFF2D3748);
   static const Color textSecondary = Color(0xFF718096);
   static const Color textMuted = Color(0xFFA0AEC0);
   
   // ========== SLIVER APP BAR CON IMAGEN ==========
-  static const double appBarExpandedHeight = 320.0;
+  static const double appBarExpandedHeight = 300.0;
   static const Color appBarBackgroundColor = primaryOrange;
   
   // Gradiente elegante sobre la imagen

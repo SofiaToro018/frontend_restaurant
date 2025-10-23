@@ -10,20 +10,37 @@ import '../views/audit_log/audit_log_list_view.dart';
 import '../views/audit_log/audit_log_detail_view.dart';
 import '../views/profile/profile_view.dart';
 import '../auth/views/login_view.dart';
+import '../auth/views/register_view.dart';
+import '../views/splash_intro/splash_intro_view.dart';
 
 final GoRouter appRouter = GoRouter(
-  initialLocation: '/login',
+  // TODO: TEMPORAL - Cambiar de vuelta a '/splash' después del desarrollo
+  // ORIGINAL: initialLocation: '/splash',
+  initialLocation: '/menu', // TEMPORAL para desarrollo
   routes: [
-    // Redirección desde raíz al login
+    // TODO: TEMPORAL - Cambiar de vuelta a '/splash' después del desarrollo  
+    // ORIGINAL: redirect: (context, state) => '/splash',
     GoRoute(
       path: '/',
-      redirect: (context, state) => '/login',
+      redirect: (context, state) => '/menu', // TEMPORAL para desarrollo
+    ),
+    
+    // Ruta de bienvenida (splash intro)
+    GoRoute(
+      path: '/splash',
+      builder: (context, state) => const SplashIntroView(),
     ),
     
     // Ruta de autenticación
     GoRoute(
       path: '/login',
       builder: (context, state) => const LoginView(),
+    ),
+    
+    // Ruta de registro
+    GoRoute(
+      path: '/register',
+      builder: (context, state) => const RegisterView(),
     ),
     
     // Ruta principal - Menú de Categorías (Vista inicial)

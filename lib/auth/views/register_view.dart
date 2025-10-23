@@ -1,25 +1,31 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
-import '../models/usuario.dart';
+import '../models/register.dart';
 import '../services/auth_service.dart';
 import '../../themes/auth_theme/login_view_theme.dart';
 
-class LoginView extends StatefulWidget {
-  const LoginView({super.key});
+class RegisterView extends StatefulWidget {
+  const RegisterView({super.key});
 
   @override
-  State<LoginView> createState() => _LoginViewState();
+  State<RegisterView> createState() => _RegisterViewState();
 }
 
-class _LoginViewState extends State<LoginView> with TickerProviderStateMixin {
+class _RegisterViewState extends State<RegisterView> with TickerProviderStateMixin {
   final _formKey = GlobalKey<FormState>();
+  final _nameController = TextEditingController();
   final _emailController = TextEditingController();
+  final _phoneController = TextEditingController();
   final _passwordController = TextEditingController();
+  final _confirmPasswordController = TextEditingController();
   final _authService = AuthService();
 
   bool _isLoading = false;
   String? _errorMessage;
   bool _obscurePassword = true;
+  bool _obscureConfirmPassword = true;
+  UserRole _selectedRole = UserRole.cliente;
 
   // Animation Controllers
   late AnimationController _characterAnimationController;
@@ -45,8 +51,11 @@ class _LoginViewState extends State<LoginView> with TickerProviderStateMixin {
     _characterAnimationController.dispose();
     _contentAnimationController.dispose();
     _buttonAnimationController.dispose();
+    _nameController.dispose();
     _emailController.dispose();
+    _phoneController.dispose();
     _passwordController.dispose();
+    _confirmPasswordController.dispose();
     super.dispose();
   }
 
@@ -132,47 +141,46 @@ class _LoginViewState extends State<LoginView> with TickerProviderStateMixin {
           padding: const EdgeInsets.symmetric(
             horizontal: LoginViewTheme.horizontalPadding,
           ),
+          physics: const ClampingScrollPhysics(), // Mejor comportamiento scroll
           child: ConstrainedBox(
             constraints: BoxConstraints(
               minHeight: MediaQuery.of(context).size.height - 
                          MediaQuery.of(context).padding.top - 
-                         MediaQuery.of(context).padding.bottom,
+                         MediaQuery.of(context).padding.bottom - 
+                         (MediaQuery.of(context).viewInsets.bottom > 0 ? 0 : 0),
             ),
-            child: IntrinsicHeight(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  // Back Button
-                  _buildBackButton(),
-                  
-                  // Top spacing
-                  const SizedBox(height: 20),
-                  
-                  // Title Section (Welcome Back arriba)
-                  _buildTitleSection(),
-                  
-                  // Spacing between title and character
-                  const SizedBox(height: 24),
-                  
-                  // Character Section with Animation
-                  _buildCharacterSection(),
-                  
-                  // Spacing after character
-                  const SizedBox(height: 32),
-                  
-                  // Form Section
-                  _buildFormSection(),
-                  
-                  // Push help text to available space
-                  const Spacer(),
-                  
-                  // Help Text Section
-                  _buildHelpTextSection(),
-                  
-                  // Bottom spacing
-                  const SizedBox(height: 20),
-                ],
-              ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                // Back Button
+                _buildBackButton(),
+                
+                // Small spacing
+                const SizedBox(height: 16),
+                
+                // Title Section
+                _buildTitleSection(),
+                
+                // Small spacing between title and character
+                const SizedBox(height: 16),
+                
+                // Character Section with Animation
+                _buildCharacterSection(),
+                
+                // Medium spacing after character
+                const SizedBox(height: 24),
+                
+                // Form Section
+                _buildFormSection(),
+                
+                // Help Text Section
+                _buildHelpTextSection(),
+                
+                // Bottom spacing (responsive)
+                SizedBox(
+                  height: MediaQuery.of(context).viewInsets.bottom > 0 ? 20 : 40,
+                ),
+              ],
             ),
           ),
         ),
@@ -224,27 +232,27 @@ class _LoginViewState extends State<LoginView> with TickerProviderStateMixin {
           child: Opacity(
             opacity: _characterFadeAnimation.value,
             child: SizedBox(
-              height: LoginViewTheme.characterHeight,
+              height: 210, // Imagen más grande
               child: Image.asset(
-                LoginViewTheme.characterAsset,
+                LoginViewTheme.registerCharacterAsset,
                 fit: BoxFit.contain,
-                semanticLabel: 'Character with key',
+                semanticLabel: 'Character signing up',
                 errorBuilder: (context, error, stackTrace) {
-                  // Fallback al logo si signIn.png no existe
+                  // Fallback al logo si signUp.png no existe
                   return Image.asset(
                     LoginViewTheme.fallbackCharacterAsset,
                     fit: BoxFit.contain,
                     semanticLabel: 'Dinner Lock Logo',
                     errorBuilder: (context, error, stackTrace) {
                       return Container(
-                        height: LoginViewTheme.characterHeight,
+                        height: 200,
                         decoration: BoxDecoration(
                           color: LoginViewTheme.fieldBackgroundColor,
                           borderRadius: BorderRadius.circular(20),
                         ),
                         child: const Icon(
-                          Icons.person_outline,
-                          size: 100,
+                          Icons.person_add_outlined,
+                          size: 80,
                           color: LoginViewTheme.placeholderColor,
                         ),
                       );
@@ -264,10 +272,10 @@ class _LoginViewState extends State<LoginView> with TickerProviderStateMixin {
     return FadeTransition(
       opacity: _titleFadeAnimation,
       child: const Text(
-        'Welcome Back!',
+        'Create Account',
         style: LoginViewTheme.titleStyle,
         textAlign: TextAlign.center,
-        semanticsLabel: 'Welcome back title',
+        semanticsLabel: 'Create account title',
       ),
     );
   }
@@ -276,8 +284,7 @@ class _LoginViewState extends State<LoginView> with TickerProviderStateMixin {
   Widget _buildFormSection() {
     return FadeTransition(
       opacity: _fieldsFadeAnimation,
-      child: Container(
-        margin: const EdgeInsets.only(top: 32),
+      child: SizedBox(
         width: MediaQuery.of(context).size.width * LoginViewTheme.fieldWidth,
         child: Form(
           key: _formKey,
@@ -309,8 +316,25 @@ class _LoginViewState extends State<LoginView> with TickerProviderStateMixin {
                     ],
                   ),
                 ),
-                const SizedBox(height: LoginViewTheme.fieldSpacing),
+                const SizedBox(height: 12),
               ],
+              
+              // Campo de nombre completo
+              SizedBox(
+                height: LoginViewTheme.fieldHeight,
+                child: TextFormField(
+                  controller: _nameController,
+                  enabled: !_isLoading,
+                  validator: _validateName,
+                  style: LoginViewTheme.fieldStyle,
+                  decoration: LoginViewTheme.buildInputDecoration(
+                    hintText: 'Full Name',
+                    prefixIcon: Icons.person_outline,
+                  ),
+                ),
+              ),
+              
+              const SizedBox(height: 12),
               
               // Campo de email
               SizedBox(
@@ -322,14 +346,74 @@ class _LoginViewState extends State<LoginView> with TickerProviderStateMixin {
                   validator: _validateEmail,
                   style: LoginViewTheme.fieldStyle,
                   decoration: LoginViewTheme.buildInputDecoration(
-                    hintText: 'Enter your Email address',
+                    hintText: 'Email Address',
                     prefixIcon: Icons.email_outlined,
                   ),
-
                 ),
               ),
               
-              const SizedBox(height: 16), // Aumentado el espaciado entre campos
+              const SizedBox(height: 12),
+              
+              // Campo de teléfono
+              SizedBox(
+                height: LoginViewTheme.fieldHeight,
+                child: TextFormField(
+                  controller: _phoneController,
+                  keyboardType: TextInputType.phone,
+                  enabled: !_isLoading,
+                  validator: _validatePhone,
+                  style: LoginViewTheme.fieldStyle,
+                  inputFormatters: [
+                    FilteringTextInputFormatter.digitsOnly,
+                    LengthLimitingTextInputFormatter(10),
+                  ],
+                  decoration: LoginViewTheme.buildInputDecoration(
+                    hintText: 'Phone Number (10 digits)',
+                    prefixIcon: Icons.phone_outlined,
+                  ),
+                ),
+              ),
+              
+              const SizedBox(height: 12),
+              
+              // Selector de rol
+              Container(
+                height: LoginViewTheme.fieldHeight,
+                decoration: LoginViewTheme.buildFieldDecoration(),
+                child: DropdownButtonFormField<UserRole>(
+                  initialValue: _selectedRole,
+                  style: LoginViewTheme.fieldStyle,
+                  decoration: const InputDecoration(
+                    hintText: 'Select Role',
+                    prefixIcon: Icon(
+                      Icons.admin_panel_settings_outlined,
+                      color: LoginViewTheme.placeholderColor,
+                      size: 20,
+                    ),
+                    border: InputBorder.none,
+                    contentPadding: EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 14,
+                    ),
+                  ),
+                  items: UserRole.values.map((role) {
+                    return DropdownMenuItem<UserRole>(
+                      value: role,
+                      child: Text(
+                        role == UserRole.cliente ? 'Cliente' : 'Administrador',
+                        style: LoginViewTheme.fieldStyle,
+                      ),
+                    );
+                  }).toList(),
+                  onChanged: _isLoading ? null : (UserRole? newRole) {
+                    setState(() {
+                      _selectedRole = newRole ?? UserRole.cliente;
+                    });
+                  },
+                ),
+              ),
+              
+              const SizedBox(height: 12),
               
               // Campo de contraseña
               SizedBox(
@@ -341,7 +425,7 @@ class _LoginViewState extends State<LoginView> with TickerProviderStateMixin {
                   validator: _validatePassword,
                   style: LoginViewTheme.fieldStyle,
                   decoration: LoginViewTheme.buildInputDecoration(
-                    hintText: 'Confirm Password',
+                    hintText: 'Password',
                     prefixIcon: Icons.lock_outlined,
                     suffixIcon: IconButton(
                       icon: Icon(
@@ -355,13 +439,41 @@ class _LoginViewState extends State<LoginView> with TickerProviderStateMixin {
                       },
                     ),
                   ),
-
                 ),
               ),
               
-              const SizedBox(height: 28), // Aumentado el espaciado antes del botón
+              const SizedBox(height: 12),
               
-              // Botón Sign In con animación
+              // Campo de confirmar contraseña
+              SizedBox(
+                height: LoginViewTheme.fieldHeight,
+                child: TextFormField(
+                  controller: _confirmPasswordController,
+                  obscureText: _obscureConfirmPassword,
+                  enabled: !_isLoading,
+                  validator: _validateConfirmPassword,
+                  style: LoginViewTheme.fieldStyle,
+                  decoration: LoginViewTheme.buildInputDecoration(
+                    hintText: 'Confirm Password',
+                    prefixIcon: Icons.lock_outlined,
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        _obscureConfirmPassword ? Icons.visibility : Icons.visibility_off,
+                        color: LoginViewTheme.placeholderColor,
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          _obscureConfirmPassword = !_obscureConfirmPassword;
+                        });
+                      },
+                    ),
+                  ),
+                ),
+              ),
+              
+              const SizedBox(height: 24),
+              
+              // Botón Create Account con animación
               AnimatedBuilder(
                 animation: _buttonScaleAnimation,
                 builder: (context, child) {
@@ -371,7 +483,7 @@ class _LoginViewState extends State<LoginView> with TickerProviderStateMixin {
                       width: double.infinity,
                       height: LoginViewTheme.fieldHeight,
                       child: ElevatedButton(
-                        onPressed: _isLoading ? null : _handleLoginWithAnimation,
+                        onPressed: _isLoading ? null : _handleRegisterWithAnimation,
                         style: LoginViewTheme.buildPrimaryButtonStyle(),
                         child: _isLoading
                             ? const SizedBox(
@@ -385,7 +497,7 @@ class _LoginViewState extends State<LoginView> with TickerProviderStateMixin {
                                 ),
                               )
                             : const Text(
-                                'Sign In',
+                                'Create Account',
                                 style: LoginViewTheme.buttonStyle,
                               ),
                       ),
@@ -403,20 +515,22 @@ class _LoginViewState extends State<LoginView> with TickerProviderStateMixin {
   // Sección de texto de ayuda
   Widget _buildHelpTextSection() {
     return Container(
-      margin: const EdgeInsets.only(top: LoginViewTheme.helpTextTopMargin),
+      margin: const EdgeInsets.only(top: 16),
       child: FadeTransition(
         opacity: _fieldsFadeAnimation,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             const Text(
-              "Don't have an account? ",
+              "Already have an account? ",
               style: LoginViewTheme.helpTextStyle,
             ),
             GestureDetector(
-              onTap: _goToRegister,
+              onTap: () {
+                context.go('/login');
+              },
               child: const Text(
-                'Sign Up',
+                'Sign In',
                 style: LoginViewTheme.linkStyle,
               ),
             ),
@@ -426,8 +540,8 @@ class _LoginViewState extends State<LoginView> with TickerProviderStateMixin {
     );
   }
 
-  // Método de login con animación del botón
-  Future<void> _handleLoginWithAnimation() async {
+  // Método de registro con animación del botón
+  Future<void> _handleRegisterWithAnimation() async {
     // Prevenir múltiples ejecuciones
     if (_isLoading) return;
     
@@ -436,8 +550,8 @@ class _LoginViewState extends State<LoginView> with TickerProviderStateMixin {
       await _buttonAnimationController.forward();
       await _buttonAnimationController.reverse();
       
-      // Ejecutar el login
-      await _handleLogin();
+      // Ejecutar el registro
+      await _handleRegister();
     } catch (e) {
       // Manejar errores de animación
       if (mounted) {
@@ -449,17 +563,36 @@ class _LoginViewState extends State<LoginView> with TickerProviderStateMixin {
     }
   }
 
-  // Navegar a registro
-  void _goToRegister() {
-    context.go('/register');
+  // Validaciones
+  String? _validateName(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'El nombre es requerido';
+    }
+    if (value.length < 2) {
+      return 'El nombre debe tener al menos 2 caracteres';
+    }
+    return null;
   }
 
   String? _validateEmail(String? value) {
     if (value == null || value.isEmpty) {
       return 'El email es requerido';
     }
-    if (!value.contains('@') || !value.contains('.')) {
+    if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
       return 'Ingresa un email válido';
+    }
+    return null;
+  }
+
+  String? _validatePhone(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'El teléfono es requerido';
+    }
+    if (value.length != 10) {
+      return 'El teléfono debe tener exactamente 10 dígitos';
+    }
+    if (!RegExp(r'^\d{10}$').hasMatch(value)) {
+      return 'El teléfono solo debe contener números';
     }
     return null;
   }
@@ -468,13 +601,26 @@ class _LoginViewState extends State<LoginView> with TickerProviderStateMixin {
     if (value == null || value.isEmpty) {
       return 'La contraseña es requerida';
     }
-    if (value.length < 6) {
-      return 'La contraseña debe tener al menos 6 caracteres';
+    if (value.length < 8) {
+      return 'La contraseña debe tener al menos 8 caracteres';
+    }
+    if (!RegExp(r'^(?=.*[A-Z])(?=.*\d)').hasMatch(value)) {
+      return 'Debe contener al menos una mayúscula y un número';
     }
     return null;
   }
 
-  Future<void> _handleLogin() async {
+  String? _validateConfirmPassword(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Confirma tu contraseña';
+    }
+    if (value != _passwordController.text) {
+      return 'Las contraseñas no coinciden';
+    }
+    return null;
+  }
+
+  Future<void> _handleRegister() async {
     // Limpiar mensaje de error anterior
     setState(() {
       _errorMessage = null;
@@ -491,28 +637,31 @@ class _LoginViewState extends State<LoginView> with TickerProviderStateMixin {
     });
 
     try {
-      // Crear request de login
-      final loginRequest = LoginRequest(
-        email: _emailController.text.trim(),
+      // Crear request de registro
+      final registerRequest = RegisterRequest(
+        nomUsuario: _nameController.text.trim(),
+        emailUsuario: _emailController.text.trim(),
+        rolUsuario: _selectedRole.value,
+        telUsuario: _phoneController.text.trim(),
         password: _passwordController.text,
       );
 
-      // Intentar hacer login
-      final result = await _authService.loginWithEmailAndPassword(loginRequest);
+      // Intentar hacer registro
+      final result = await _authService.registerUser(registerRequest);
 
       if (mounted) {
         setState(() {
           _isLoading = false;
         });
 
-        if (result.isAuthenticated) {
-          // Login exitoso, navegar al home
-          _showSuccessMessage('¡Bienvenido, ${result.usuario!.formattedName}!');
+        if (result.isSuccess) {
+          // Registro exitoso, mostrar mensaje y navegar al login
+          _showSuccessMessage(result.message ?? '¡Registro exitoso!');
           
-          // Navegar después de un breve delay para mostrar el mensaje
-          Future.delayed(const Duration(seconds: 1), () {
+          // Navegar después de 3 segundos
+          Future.delayed(const Duration(seconds: 3), () {
             if (mounted) {
-              context.go('/menu');
+              context.go('/login');
             }
           });
         } else if (result.hasError) {
@@ -537,10 +686,8 @@ class _LoginViewState extends State<LoginView> with TickerProviderStateMixin {
       SnackBar(
         content: Text(message),
         backgroundColor: Colors.green,
-        duration: const Duration(seconds: 2),
+        duration: const Duration(seconds: 3),
       ),
     );
   }
-
-
 }

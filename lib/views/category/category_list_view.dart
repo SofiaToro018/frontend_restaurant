@@ -6,6 +6,7 @@ import '../../models/category.dart';
 import '../../services/category_service.dart';
 import '../../themes/category_theme/category_list_view_theme.dart';
 import '../../widgets/base_view.dart';
+import '../../utils/currency_formatter.dart';
 
 class CategoryListView extends StatefulWidget {
   const CategoryListView({super.key});
@@ -78,52 +79,72 @@ class _CategoryListViewState extends State<CategoryListView> {
         height: CategoryListViewTheme.bannerHeight,
         margin: CategoryListViewTheme.bannerMargin,
         decoration: CategoryListViewTheme.bannerDecoration,
-        child: Stack(
-          children: [
-            // Imagen decorativa
-            Positioned(
-              right: CategoryListViewTheme.bannerDecorationIconRight,
-              top: CategoryListViewTheme.bannerDecorationIconTop,
-              child: Opacity(
-                opacity: CategoryListViewTheme.bannerDecorationIconOpacity,
-                child: Icon(
-                  Icons.restaurant,
-                  size: CategoryListViewTheme.bannerDecorationIconSize,
-                  color: CategoryListViewTheme.bannerDecorationIconColor,
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(CategoryListViewTheme.bannerBorderRadius),
+          child: Stack(
+            children: [
+              // Imagen de fondo
+              Positioned.fill(
+                child: Image.asset(
+                  CategoryListViewTheme.bannerImageAsset,
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) {
+                    // Fallback si no se encuentra la imagen
+                    return Container(
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                          colors: [
+                            CategoryListViewTheme.accentColor,
+                            CategoryListViewTheme.highlightColor,
+                          ],
+                        ),
+                      ),
+                    );
+                  },
                 ),
               ),
-            ),
-            // Contenido principal del banner
-            Positioned(
-              left: CategoryListViewTheme.bannerContentLeft,
-              right: CategoryListViewTheme.bannerContentRight,
-              bottom: CategoryListViewTheme.bannerContentBottom,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    'Restaurante',
-                    style: CategoryListViewTheme.bannerSubtitleStyle,
+              // Overlay semitransparente para el texto
+              Positioned.fill(
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: CategoryListViewTheme.bannerTextOverlayColor,
                   ),
-                  const SizedBox(height: CategoryListViewTheme.bannerInternalSpacing1),
-                  Text(
-                    'UCEVA',
-                    style: CategoryListViewTheme.bannerTitleStyle,
-                  ),
-                  const SizedBox(height: CategoryListViewTheme.bannerInternalSpacing2),
-                  Container(
-                    padding: CategoryListViewTheme.bannerDescriptionPadding,
-                    decoration: CategoryListViewTheme.bannerDescriptionDecoration,
-                    child: Text(
-                      'Menú del día • Especialidades • Tradición',
-                      style: CategoryListViewTheme.bannerDescriptionStyle,
-                    ),
-                  ),
-                ],
+                ),
               ),
-            ),
-          ],
+              // Contenido principal del banner
+              Positioned(
+                left: CategoryListViewTheme.bannerContentLeft,
+                right: CategoryListViewTheme.bannerContentRight,
+                bottom: CategoryListViewTheme.bannerContentBottom,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      'Restaurante',
+                      style: CategoryListViewTheme.bannerSubtitleStyle,
+                    ),
+                    const SizedBox(height: CategoryListViewTheme.bannerInternalSpacing1),
+                    Text(
+                      'Dinner Lock',
+                      style: CategoryListViewTheme.bannerTitleStyle,
+                    ),
+                    const SizedBox(height: CategoryListViewTheme.bannerInternalSpacing2),
+                    Container(
+                      padding: CategoryListViewTheme.bannerDescriptionPadding,
+                      decoration: CategoryListViewTheme.bannerDescriptionDecoration,
+                      child: Text(
+                        'Menú del día • Especialidades • Tradición',
+                        style: CategoryListViewTheme.bannerDescriptionStyle,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -177,28 +198,24 @@ class _CategoryListViewState extends State<CategoryListView> {
                     context.push('/category/${category.id}');
                   },
                   child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    padding: CategoryListViewTheme.viewAllButtonPadding,
                     decoration: BoxDecoration(
-                      color: Colors.orange[50],
-                      borderRadius: BorderRadius.circular(16),
-                      border: Border.all(color: Colors.orange[200]!),
+                      color: CategoryListViewTheme.viewAllButtonBackgroundColor,
+                      borderRadius: BorderRadius.circular(CategoryListViewTheme.viewAllButtonBorderRadius),
+                      border: Border.all(color: CategoryListViewTheme.viewAllButtonBorderColor),
                     ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Text(
                           'Ver todo',
-                          style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.orange[700],
-                          ),
+                          style: CategoryListViewTheme.viewAllButtonTextStyle,
                         ),
-                        const SizedBox(width: 4),
+                        SizedBox(width: CategoryListViewTheme.viewAllButtonSpacing),
                         Icon(
                           Icons.arrow_forward,
-                          size: 16,
-                          color: Colors.orange[700],
+                          size: CategoryListViewTheme.viewAllButtonIconSize,
+                          color: CategoryListViewTheme.viewAllButtonIconColor,
                         ),
                       ],
                     ),
@@ -317,16 +334,20 @@ class _CategoryListViewState extends State<CategoryListView> {
                       
                       const Spacer(),
                       
-                      // Fila inferior con precio e icono
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            '\$${item.precItem.toStringAsFixed(0)}',
-                            style: item.estItem 
-                              ? CategoryListViewTheme.cardPriceStyle 
-                              : CategoryListViewTheme.cardPriceDisabledStyle,
-                          ),
+                        // Fila inferior con precio e icono
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Expanded(
+                              child: Text(
+                                CurrencyFormatter.formatColombianPrice(item.precItem),
+                                style: item.estItem 
+                                  ? CategoryListViewTheme.cardPriceStyle 
+                                  : CategoryListViewTheme.cardPriceDisabledStyle,
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
                           if (item.estItem)
                             Container(
                               padding: CategoryListViewTheme.cardButtonSmallPadding,
