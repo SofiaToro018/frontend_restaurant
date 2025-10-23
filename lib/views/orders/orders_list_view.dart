@@ -5,6 +5,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import '../../models/order.dart';
 import '../../services/orders_service.dart';
 import '../../widgets/base_view.dart';
+import '../../utils/currency_formatter.dart';
 
 class OrdersListView extends StatefulWidget {
   const OrdersListView({super.key});
@@ -140,7 +141,7 @@ class _OrdersListViewState extends State<OrdersListView> {
                                   const SizedBox(height: 8),
                                   // Precio total
                                   Text(
-                                    '\$${order.preTotPedido.toStringAsFixed(0)}',
+                                    CurrencyFormatter.formatColombianPrice(order.preTotPedido),
                                     style: const TextStyle(
                                       fontSize: 16,
                                       fontWeight: FontWeight.bold,

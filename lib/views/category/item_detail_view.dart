@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../../models/category.dart';
 import '../../services/category_service.dart';
 import '../../themes/category_theme/item_detail_view_theme.dart';
+import '../../utils/currency_formatter.dart';
 
 class ItemDetailView extends StatefulWidget {
   final String itemId;
@@ -135,7 +136,7 @@ class _ItemDetailViewState extends State<ItemDetailView> {
                       padding: ItemDetailViewTheme.priceContainerPadding,
                       decoration: ItemDetailViewTheme.priceContainerDecoration(item.estItem),
                       child: Text(
-                        '\$${item.precItem.toStringAsFixed(0)}',
+                        CurrencyFormatter.formatColombianPrice(item.precItem),
                         style: item.estItem 
                             ? ItemDetailViewTheme.priceStyle
                             : ItemDetailViewTheme.priceDisabledStyle,
@@ -287,7 +288,7 @@ class _ItemDetailViewState extends State<ItemDetailView> {
                 const SizedBox(width: ItemDetailViewTheme.buttonTextSpacing),
                 Text(
                   item.estItem
-                      ? 'Agregar al Carrito - \$${item.precItem.toStringAsFixed(0)}'
+                      ? 'Agregar al Carrito - ${CurrencyFormatter.formatColombianPrice(item.precItem)}'
                       : 'Producto No Disponible',
                   style: ItemDetailViewTheme.primaryButtonTextStyle,
                 ),

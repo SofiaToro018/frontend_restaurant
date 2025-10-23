@@ -1,43 +1,44 @@
 import 'package:flutter/material.dart';
 
 class CategoryListViewTheme {
+  // ========== NUEVA PALETA DE COLORES ==========
+  static const Color primaryBackgroundColor = Color(0xFFF5F5F5); // Fondo general claro
+  static const Color secondaryBackgroundColor = Color(0xFFEDEDED); // Para contenedores o tarjetas
+  static const Color primaryTextColor = Color(0xFF1A1A1A); // Texto principal
+  static const Color secondaryTextColor = Color(0xFF555555); // Texto secundario
+  static const Color accentColor = Color(0xFF2E7D32); // Botones, íconos, resaltes
+  static const Color highlightColor = Color(0xFF388E3C); // Precio o destacados
+  static const Color inactiveIconColor = Color(0xFF9E9E9E); // Íconos inactivos
+  static const Color bottomNavBarColor = Color(0xFFFFFFFF); // BottomNavigationBar
+  static const Color activeNavColor = Color(0xFF2E7D32); // Íconos activos en nav
+
   // ========== CONFIGURACIÓN GENERAL ==========
   // Fondo de la aplicación
-  static Color backgroundColor = Colors.grey[50]!;
+  static Color backgroundColor = primaryBackgroundColor;
   
   // Padding principal del contenido
   static const EdgeInsets mainContentPadding = EdgeInsets.symmetric(horizontal: 16.0);
   static const double mainContentTopSpacing = 20.0;
   
   // ========== BANNER SUPERIOR ==========
-  // Configuración del banner
+  // Configuración del banner - ahora usa imagen encabezado.png
   static const double bannerHeight = 200.0;
   static const EdgeInsets bannerMargin = EdgeInsets.all(16.0);
-  static const double bannerBorderRadius = 20.0;
+  static const double bannerBorderRadius = 12.0; // Bordes más suaves
+  static const String bannerImageAsset = 'assets/images/encabezado.png';
   
-  // Gradiente del banner
-  static List<Color> bannerGradientColors = [
-    Colors.orange[100]!,
-    Colors.orange[50]!,
-  ];
-  static const Alignment bannerGradientBegin = Alignment.topCenter;
-  static const Alignment bannerGradientEnd = Alignment.bottomCenter;
-  
-  // Sombra del banner
+  // Sombra del banner (más sutil)
   static List<BoxShadow> bannerShadow = [
     BoxShadow(
-      color: Colors.orange.withValues(alpha: 0.2),
-      blurRadius: 12,
-      offset: const Offset(0, 4),
+      color: Colors.black.withValues(alpha: 0.1),
+      blurRadius: 8,
+      offset: const Offset(0, 2),
     ),
   ];
   
-  // Icono decorativo del banner
-  static const double bannerDecorationIconSize = 150.0;
-  static const double bannerDecorationIconOpacity = 0.1;
-  static const double bannerDecorationIconRight = -20.0;
-  static const double bannerDecorationIconTop = 20.0;
-  static Color bannerDecorationIconColor = Colors.orange[800]!;
+  // Overlay semitransparente para el texto sobre la imagen
+  static Color bannerTextOverlayColor = Colors.black.withValues(alpha: 0.4);
+  static const double bannerTextOverlayOpacity = 0.4;
   
   // Posicionamiento del contenido del banner
   static const double bannerContentLeft = 24.0;
@@ -47,18 +48,18 @@ class CategoryListViewTheme {
   // Estilos de texto del banner
   static const String bannerFontFamily = 'Georgia';
   
-  static TextStyle bannerSubtitleStyle = TextStyle(
+  static const TextStyle bannerSubtitleStyle = TextStyle(
     fontFamily: bannerFontFamily,
     fontSize: 16,
-    color: Colors.orange[800],
+    color: Colors.white,
     fontWeight: FontWeight.w300,
   );
   
-  static TextStyle bannerTitleStyle = TextStyle(
+  static const TextStyle bannerTitleStyle = TextStyle(
     fontFamily: bannerFontFamily,
     fontSize: 36,
     fontWeight: FontWeight.bold,
-    color: Colors.orange[900],
+    color: Colors.white,
     fontStyle: FontStyle.italic,
     letterSpacing: 1.2,
   );
@@ -69,7 +70,7 @@ class CategoryListViewTheme {
   static Color bannerDescriptionBackgroundColor = Colors.white.withValues(alpha: 0.9);
   static List<BoxShadow> bannerDescriptionShadow = [
     BoxShadow(
-      color: Colors.orange.withValues(alpha: 0.2),
+      color: Colors.black.withValues(alpha: 0.1),
       blurRadius: 8,
       offset: const Offset(0, 2),
     ),
@@ -77,7 +78,7 @@ class CategoryListViewTheme {
   
   static TextStyle bannerDescriptionStyle = TextStyle(
     fontSize: 13,
-    color: Colors.grey[700],
+    color: primaryTextColor,
     fontWeight: FontWeight.w500,
   );
   
@@ -94,24 +95,24 @@ class CategoryListViewTheme {
   static const TextStyle categoryTitleStyle = TextStyle(
     fontSize: 24,
     fontWeight: FontWeight.bold,
-    color: Colors.black87,
+    color: primaryTextColor,
     letterSpacing: 0.5,
   );
   
   // Configuración del botón "Ver todo"
   static const EdgeInsets viewAllButtonPadding = EdgeInsets.symmetric(horizontal: 12, vertical: 6);
   static const double viewAllButtonBorderRadius = 16.0;
-  static Color viewAllButtonBackgroundColor = Colors.orange[50]!;
-  static Color viewAllButtonBorderColor = Colors.orange[200]!;
+  static Color viewAllButtonBackgroundColor = accentColor.withValues(alpha: 0.1);
+  static const Color viewAllButtonBorderColor = accentColor;
   static const double viewAllButtonSpacing = 4.0;
   
-  static TextStyle viewAllButtonTextStyle = TextStyle(
+  static const TextStyle viewAllButtonTextStyle = TextStyle(
     fontSize: 14,
     fontWeight: FontWeight.w600,
-    color: Colors.orange[700],
+    color: accentColor,
   );
   
-  static Color viewAllButtonIconColor = Colors.orange[700]!;
+  static const Color viewAllButtonIconColor = accentColor;
   static const double viewAllButtonIconSize = 16.0;
   
   // ========== TARJETAS DE ITEMS ==========
@@ -140,17 +141,11 @@ class CategoryListViewTheme {
   static const double cardButtonSmallIconSize = 20.0;
   static const double loadingStrokeWidth = 2.0;
   
-  // Sombras de las nuevas tarjetas
+  // Sombras de las nuevas tarjetas (muy ligera)
   static List<BoxShadow> newMenuItemShadow = [
     BoxShadow(
-      color: Colors.black.withValues(alpha: 0.08),
-      blurRadius: 12,
-      offset: const Offset(0, 4),
-      spreadRadius: 0,
-    ),
-    BoxShadow(
-      color: Colors.black.withValues(alpha: 0.04),
-      blurRadius: 6,
+      color: Colors.black.withValues(alpha: 0.05),
+      blurRadius: 8,
       offset: const Offset(0, 2),
       spreadRadius: 0,
     ),
@@ -227,35 +222,35 @@ class CategoryListViewTheme {
     height: 1.3,
   );
   
-  static TextStyle newMenuItemPriceStyle = TextStyle(
-    fontSize: 20,
+  static const TextStyle newMenuItemPriceStyle = TextStyle(
+    fontSize: 16,
     fontWeight: FontWeight.bold,
-    color: Colors.orange[700],
+    color: highlightColor,
   );
   
-  static TextStyle cardPriceStyle = TextStyle( // Alias para compatibilidad
-    fontSize: 20,
+  static const TextStyle cardPriceStyle = TextStyle( // Alias para compatibilidad
+    fontSize: 16,
     fontWeight: FontWeight.bold,
-    color: Colors.orange[700],
+    color: highlightColor,
   );
   
-  static TextStyle newMenuItemPriceDisabledStyle = TextStyle(
-    fontSize: 20,
+  static const TextStyle newMenuItemPriceDisabledStyle = TextStyle(
+    fontSize: 16,
     fontWeight: FontWeight.bold,
-    color: Colors.grey[500],
+    color: inactiveIconColor,
   );
   
-  static TextStyle cardPriceDisabledStyle = TextStyle( // Alias para compatibilidad
-    fontSize: 20,
+  static const TextStyle cardPriceDisabledStyle = TextStyle( // Alias para compatibilidad
+    fontSize: 16,
     fontWeight: FontWeight.bold,
-    color: Colors.grey[500],
+    color: inactiveIconColor,
   );
   
   // Estilos de categoría en tarjetas
-  static TextStyle cardCategoryStyle = TextStyle(
+  static const TextStyle cardCategoryStyle = TextStyle(
     fontSize: 10,
     fontWeight: FontWeight.w600,
-    color: Colors.orange[700],
+    color: accentColor,
     letterSpacing: 0.5,
   );
   
@@ -269,8 +264,8 @@ class CategoryListViewTheme {
   // Configuración del botón de agregar en tarjetas
   static const EdgeInsets addButtonPadding = EdgeInsets.all(8);
   static const double addButtonBorderRadius = 12.0;
-  static Color addButtonBackgroundColor = Colors.orange[50]!;
-  static Color addButtonIconColor = Colors.orange[700]!;
+  static Color addButtonBackgroundColor = accentColor.withValues(alpha: 0.1);
+  static const Color addButtonIconColor = accentColor;
   static const double addButtonIconSize = 20.0;
   
   // Colores de iconos en tarjetas
@@ -339,14 +334,10 @@ class CategoryListViewTheme {
   );
   
   // ========== DECORACIONES ==========
-  // Decoración del banner
+  // Decoración del banner - ahora usa imagen
   static BoxDecoration get bannerDecoration {
     return BoxDecoration(
-      gradient: LinearGradient(
-        begin: bannerGradientBegin,
-        end: bannerGradientEnd,
-        colors: bannerGradientColors,
-      ),
+      color: secondaryBackgroundColor,
       borderRadius: BorderRadius.circular(bannerBorderRadius),
       boxShadow: bannerShadow,
     );
@@ -404,10 +395,10 @@ class CategoryListViewTheme {
   
   static BoxDecoration buildCardCategoryDecoration() {
     return BoxDecoration(
-      color: Colors.orange[50],
+      color: accentColor.withValues(alpha: 0.1),
       borderRadius: BorderRadius.circular(12),
       border: Border.all(
-        color: Colors.orange.withValues(alpha: 0.3),
+        color: accentColor.withValues(alpha: 0.3),
         width: 1,
       ),
     );
@@ -415,11 +406,11 @@ class CategoryListViewTheme {
   
   static BoxDecoration buildCardButtonDecoration() {
     return BoxDecoration(
-      color: Colors.orange[600],
+      color: accentColor,
       borderRadius: BorderRadius.circular(20),
       boxShadow: [
         BoxShadow(
-          color: Colors.orange.withValues(alpha: 0.3),
+          color: accentColor.withValues(alpha: 0.3),
           blurRadius: 4,
           offset: const Offset(0, 2),
         ),

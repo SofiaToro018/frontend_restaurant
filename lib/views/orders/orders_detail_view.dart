@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../models/order.dart';
 import '../../services/orders_service.dart';
+import '../../utils/currency_formatter.dart';
 
 class OrdersDetailView extends StatefulWidget {
   final String orderId;
@@ -285,14 +286,14 @@ class _OrdersDetailViewState extends State<OrdersDetailView> {
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
                           Text(
-                            '\$${detail.precUnitario.toStringAsFixed(0)} c/u',
+                            CurrencyFormatter.formatPricePerUnit(detail.precUnitario),
                             style: TextStyle(
                               fontSize: 12,
                               color: Colors.grey[600],
                             ),
                           ),
                           Text(
-                            '\$${detail.subtotal.toStringAsFixed(0)}',
+                            CurrencyFormatter.formatColombianPrice(detail.subtotal),
                             style: const TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
@@ -350,7 +351,7 @@ class _OrdersDetailViewState extends State<OrdersDetailView> {
                     ),
                   ),
                   Text(
-                    '\$${detail.subtotal.toStringAsFixed(0)}',
+                    CurrencyFormatter.formatColombianPrice(detail.subtotal),
                     style: TextStyle(
                       fontSize: 14,
                       color: Colors.grey[700],
@@ -374,7 +375,7 @@ class _OrdersDetailViewState extends State<OrdersDetailView> {
                   ),
                 ),
                 Text(
-                  '\$${order.preTotPedido.toStringAsFixed(0)}',
+                  CurrencyFormatter.formatColombianPrice(order.preTotPedido),
                   style: const TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,

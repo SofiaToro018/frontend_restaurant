@@ -21,7 +21,7 @@ class CategoryItemsListViewTheme {
   
   // Configuración del icono de categoría
   static const double categoryIconSize = 80.0;
-  static const Color categoryIconColor = Colors.orange;
+  static const Color categoryIconColor = Color(0xFF2E7D32);
   
   // Estilos de texto del card de categoría (centrados)
   static const TextStyle categoryTitleStyle = TextStyle(
@@ -84,7 +84,7 @@ class CategoryItemsListViewTheme {
   static const double itemImageBorderRadius = 12.0;
   static const double itemImageSpacing = 12.0;
   static Color itemImagePlaceholderColor = Colors.grey[100]!;
-  static Color itemImageIconColor = Colors.orange[300]!;
+  static const Color itemImageIconColor = Color(0xFF81C784);
   static const double itemImageIconSize = 40.0;
   
   // ========== CONTENIDO DE TARJETA ==========
@@ -116,11 +116,11 @@ class CategoryItemsListViewTheme {
     height: 1.3,
   );
   
-  static TextStyle itemPriceStyle = TextStyle(
+  static const TextStyle itemPriceStyle = TextStyle(
     fontFamily: 'Georgia',
     fontSize: 18,
     fontWeight: FontWeight.bold,
-    color: Colors.orange[700],
+    color: Color(0xFF388E3C),
   );
   
   static TextStyle itemPriceDisabledStyle = TextStyle(
@@ -145,8 +145,8 @@ class CategoryItemsListViewTheme {
   // Configuración del botón de agregar
   static const EdgeInsets addButtonPadding = EdgeInsets.all(6);
   static const double addButtonBorderRadius = 8.0;
-  static Color addButtonBackgroundColor = Colors.orange[50]!;
-  static Color addButtonIconColor = Colors.orange[700]!;
+  static const Color addButtonBackgroundColor = Color(0xFFE8F5E8);
+  static const Color addButtonIconColor = Color(0xFF2E7D32);
   static const double addButtonIconSize = 16.0;
   
   // ========== VISTA VACÍA ==========
@@ -177,13 +177,13 @@ class CategoryItemsListViewTheme {
       borderRadius: BorderRadius.circular(categoryCardBorderRadius),
       boxShadow: [
         BoxShadow(
-          color: Colors.orange.withValues(alpha: 0.1),
+          color: const Color(0xFF2E7D32).withValues(alpha: 0.1),
           blurRadius: 12,
           offset: const Offset(0, 4),
         ),
       ],
       border: Border.all(
-        color: Colors.orange.withValues(alpha: 0.1),
+        color: const Color(0xFF2E7D32).withValues(alpha: 0.1),
         width: 1,
       ),
     );

@@ -7,6 +7,9 @@ class CustomDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Obtener la ruta actual para determinar qué opción está activa
+    final currentRoute = GoRouterState.of(context).uri.path;
+    
     return Drawer(
       child: ListView(
         padding: EdgeInsets.zero,
@@ -38,8 +41,16 @@ class CustomDrawer extends StatelessWidget {
           
           // Opción: Menú
           ListTile(
-            leading: const Icon(Icons.restaurant_menu),
-            title: const Text('Menú'),
+            leading: Icon(
+              Icons.restaurant_menu,
+              color: currentRoute == '/menu' ? Colors.green : Colors.grey,
+            ),
+            title: Text(
+              'Menú',
+              style: TextStyle(
+                color: currentRoute == '/menu' ? Colors.green : Colors.grey[700],
+              ),
+            ),
             onTap: () {
               Navigator.pop(context);
               context.go('/menu');
@@ -48,9 +59,22 @@ class CustomDrawer extends StatelessWidget {
 
           // Opción: Pedidos
           ListTile(
-            leading: const Icon(Icons.receipt_long),
-            title: const Text('Mis Pedidos'),
-            subtitle: const Text('Ver historial'),
+            leading: Icon(
+              Icons.receipt_long,
+              color: currentRoute == '/orders' ? Colors.green : Colors.grey,
+            ),
+            title: Text(
+              'Mis Pedidos',
+              style: TextStyle(
+                color: currentRoute == '/orders' ? Colors.green : Colors.grey[700],
+              ),
+            ),
+            subtitle: Text(
+              'Ver historial',
+              style: TextStyle(
+                color: currentRoute == '/orders' ? Colors.green[700] : Colors.grey[600],
+              ),
+            ),
             onTap: () {
               Navigator.pop(context);
               context.go('/orders');
@@ -59,9 +83,22 @@ class CustomDrawer extends StatelessWidget {
 
           // Opción: Reservas
           ListTile(
-            leading: const Icon(Icons.event_seat),
-            title: const Text('Mis Reservas'),
-            subtitle: const Text('Ver reservas'),
+            leading: Icon(
+              Icons.event_seat,
+              color: currentRoute == '/bookings' ? Colors.green : Colors.grey,
+            ),
+            title: Text(
+              'Mis Reservas',
+              style: TextStyle(
+                color: currentRoute == '/bookings' ? Colors.green : Colors.grey[700],
+              ),
+            ),
+            subtitle: Text(
+              'Ver reservas',
+              style: TextStyle(
+                color: currentRoute == '/bookings' ? Colors.green[700] : Colors.grey[600],
+              ),
+            ),
             onTap: () {
               Navigator.pop(context);
               context.go('/bookings');
@@ -70,9 +107,22 @@ class CustomDrawer extends StatelessWidget {
 
           // Opción: Perfil
           ListTile(
-            leading: const Icon(Icons.account_circle),
-            title: const Text('Mi Perfil'),
-            subtitle: const Text('Ver información'),
+            leading: Icon(
+              Icons.account_circle,
+              color: currentRoute == '/profile' ? Colors.green : Colors.grey,
+            ),
+            title: Text(
+              'Mi Perfil',
+              style: TextStyle(
+                color: currentRoute == '/profile' ? Colors.green : Colors.grey[700],
+              ),
+            ),
+            subtitle: Text(
+              'Ver información',
+              style: TextStyle(
+                color: currentRoute == '/profile' ? Colors.green[700] : Colors.grey[600],
+              ),
+            ),
             onTap: () {
               Navigator.pop(context);
               context.go('/profile');
@@ -92,9 +142,22 @@ class CustomDrawer extends StatelessWidget {
           
           // Opción: Registro de Cambios
           ListTile(
-            leading: const Icon(Icons.history),
-            title: const Text('Registro de Cambios'),
-            subtitle: const Text('Ver audit logs'),
+            leading: Icon(
+              Icons.history,
+              color: currentRoute == '/audit-logs' ? Colors.green : Colors.grey,
+            ),
+            title: Text(
+              'Registro de Cambios',
+              style: TextStyle(
+                color: currentRoute == '/audit-logs' ? Colors.green : Colors.grey[700],
+              ),
+            ),
+            subtitle: Text(
+              'Ver audit logs',
+              style: TextStyle(
+                color: currentRoute == '/audit-logs' ? Colors.green[700] : Colors.grey[600],
+              ),
+            ),
             onTap: () {
               Navigator.pop(context);
               context.go('/audit-logs');
@@ -103,9 +166,22 @@ class CustomDrawer extends StatelessWidget {
           
           // Opción: Test API
           ListTile(
-            leading: const Icon(Icons.api),
-            title: const Text('Test API'),
-            subtitle: const Text('Probar conexión'),
+            leading: const Icon(
+              Icons.api,
+              color: Colors.grey,
+            ),
+            title: Text(
+              'Test API',
+              style: TextStyle(
+                color: Colors.grey[700],
+              ),
+            ),
+            subtitle: Text(
+              'Probar conexión',
+              style: TextStyle(
+                color: Colors.grey[600],
+              ),
+            ),
             onTap: () {
               Navigator.pop(context);
               // Aquí se puede añadir una ruta de prueba más adelante
