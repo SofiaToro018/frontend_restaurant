@@ -9,6 +9,7 @@ import '../views/booking/booking_detail_view.dart';
 import '../views/audit_log/audit_log_list_view.dart';
 import '../views/audit_log/audit_log_detail_view.dart';
 import '../views/profile/profile_view.dart';
+import '../views/profile/profile_edit_view.dart';
 import '../auth/views/login_view.dart';
 import '../auth/views/register_view.dart';
 import '../views/splash_intro/splash_intro_view.dart';
@@ -16,13 +17,13 @@ import '../views/splash_intro/splash_intro_view.dart';
 final GoRouter appRouter = GoRouter(
   // TODO: TEMPORAL - Cambiar de vuelta a '/splash' después del desarrollo
   // ORIGINAL: initialLocation: '/splash',
-  initialLocation: '/splash', // TEMPORAL para desarrollo
+  initialLocation: '/menu', // TEMPORAL para desarrollo
   routes: [
     // TODO: TEMPORAL - Cambiar de vuelta a '/splash' después del desarrollo  
     // ORIGINAL: redirect: (context, state) => '/splash',
     GoRoute(
       path: '/',
-      redirect: (context, state) => '/splash', // TEMPORAL para desarrollo
+      redirect: (context, state) => '/menu', // TEMPORAL para desarrollo
     ),
     
     // Ruta de bienvenida (splash intro)
@@ -116,6 +117,15 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: '/profile',
       builder: (context, state) => const ProfileView(),
+    ),
+    
+    // Ruta para editar perfil de usuario
+    GoRoute(
+      path: '/profile/edit/:id',
+      builder: (context, state) {
+        final userId = int.parse(state.pathParameters['id']!);
+        return ProfileEditView(id: userId);
+      },
     ),
   ],
 
