@@ -270,7 +270,7 @@ class _ItemDetailViewState extends State<ItemDetailView> {
                 ? () {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
-                        content: Text('${item.nomItem} agregado al carrito'),
+                        content: Text('${item.nomItem} añadido'),
                         backgroundColor: ItemDetailViewTheme.primaryOrangeShade600,
                         behavior: SnackBarBehavior.floating,
                       ),
@@ -282,13 +282,13 @@ class _ItemDetailViewState extends State<ItemDetailView> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Icon(
-                  item.estItem ? Icons.add_shopping_cart : Icons.block,
+                  item.estItem ? Icons.check_circle_outline : Icons.block,
                   size: ItemDetailViewTheme.buttonIconSize,
                 ),
                 const SizedBox(width: ItemDetailViewTheme.buttonTextSpacing),
                 Text(
                   item.estItem
-                      ? 'Agregar al Carrito - ${CurrencyFormatter.formatColombianPrice(item.precItem)}'
+                      ? 'Ordenar - ${CurrencyFormatter.formatColombianPrice(item.precItem)}'
                       : 'Producto No Disponible',
                   style: ItemDetailViewTheme.primaryButtonTextStyle,
                 ),

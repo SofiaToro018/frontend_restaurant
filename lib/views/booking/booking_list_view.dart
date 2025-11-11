@@ -5,6 +5,10 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import '../../models/booking.dart';
 import '../../services/booking_service.dart';
 import '../../widgets/base_view.dart';
+import '../../themes/category_theme/category_list_view_theme.dart';
+import '../../auth/services/auth_service.dart';
+import 'booking_create_view.dart';
+
 
 class BookingListView extends StatefulWidget {
   const BookingListView({super.key});
@@ -14,231 +18,271 @@ class BookingListView extends StatefulWidget {
 }
 
 class _BookingListViewState extends State<BookingListView> {
-  //* Se crea una instancia de la clase BookingService
   final BookingService _bookingService = BookingService();
-  //* Se declara una variable de tipo Future que contendrá la lista de Reservas
   late Future<List<Booking>> _futureBookings;
 
+  void _goToCreate() {
+    Navigator.of(context).push<bool>(
+      MaterialPageRoute(
+        builder: (context) => BookingCreateView(),
+      ),
+    ).then((created) {
+      if (created == true) {
+        final usuario = AuthService().currentUsuario;
+        if (usuario != null) {
+          setState(() {
+            _futureBookings = _bookingService.getBookingsByUser(usuario.id);
+          });
+        }
+      }
+    });
+  }
   @override
   void initState() {
     super.initState();
-    //! Se llama al método getBookingsByUser de la clase BookingService
-    // Obtener reservas del usuario por defecto del .env
-    final userId = int.parse(dotenv.env['DEFAULT_USER_ID'] ?? '1');
-    _futureBookings = _bookingService.getBookingsByUser(userId);
+    final usuario = AuthService().currentUsuario;
+    if (usuario != null) {
+      _futureBookings = _bookingService.getBookingsByUser(usuario.id);
+    } else {
+      // Si no hay usuario logueado, retorna lista vacía
+      _futureBookings = Future.value([]);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return BaseView(
-      title: 'Mis Reservas',
-      //! Se crea un FutureBuilder que se encargará de construir la lista de Reservas
-      //! futurebuilder se utiliza para construir widgets basados en un Future
-      body: FutureBuilder<List<Booking>>(
-        future: _futureBookings,
-        builder: (context, snapshot) {
-          //snapshot contiene la respuesta del Future
-          if (snapshot.hasData) {
-            //* Se obtiene la lista de Reservas
-            final bookings = snapshot.data!;
-            
-            if (bookings.isEmpty) {
-              return const Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      Icons.event_seat,
-                      size: 64,
-                      color: Colors.grey,
+    return Container(
+      color: CategoryListViewTheme.backgroundColor,
+        child: BaseView(
+          title: 'Mis Reservas',
+          floatingActionButton: FloatingActionButton.extended(
+            onPressed: _goToCreate,
+            icon: const Icon(Icons.add),
+            label: const Text('reservar'),
+            backgroundColor: const Color(0xFF2E7D32),
+            foregroundColor: Colors.white,
+            tooltip: 'Crear nueva reserva',
+          ),
+          body: FutureBuilder<List<Booking>>(
+          future: _futureBookings,
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              final bookings = snapshot.data!;
+              final usuario = AuthService().currentUsuario;
+              if (usuario == null) {
+                return Center(
+                  child: Container(
+                    padding: const EdgeInsets.all(32),
+                    decoration: CategoryListViewTheme.emptyCategoryDecoration,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          Icons.person_off,
+                          size: CategoryListViewTheme.emptyCategoryIconSize,
+                          color: CategoryListViewTheme.emptyCategoryIconColor,
+                        ),
+                        SizedBox(height: CategoryListViewTheme.emptyCategorySpacing),
+                        Text(
+                          'Debes iniciar sesión para ver tus reservas',
+                          style: CategoryListViewTheme.emptyCategoryTextStyle,
+                        ),
+                      ],
                     ),
-                    SizedBox(height: 16),
-                    Text(
-                      'No tienes reservas aún',
-                      style: TextStyle(
-                        fontSize: 18,
-                        color: Colors.grey,
-                      ),
-                    ),
-                  ],
-                ),
-              );
-            }
-            
-            //listview.builder se utiliza para construir una lista de elementos de manera eficiente
-            return ListView.builder(
-              itemCount: bookings.length,
-              itemBuilder: (context, index) {
-                final booking = bookings[index];
-                return Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16.0,
-                    vertical: 8.0,
                   ),
-                  //* gestureDetector se utiliza para detectar gestos del usuario
-                  //* en este caso se utiliza para navegar a la vista de detalle de la Reserva
-                  child: GestureDetector(
+                );
+              }
+              if (bookings.isEmpty) {
+                return Center(
+                  child: Container(
+                    padding: const EdgeInsets.all(32),
+                    decoration: CategoryListViewTheme.emptyCategoryDecoration,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          Icons.event_seat,
+                          size: CategoryListViewTheme.emptyCategoryIconSize,
+                          color: CategoryListViewTheme.emptyCategoryIconColor,
+                        ),
+                        SizedBox(height: CategoryListViewTheme.emptyCategorySpacing),
+                        Text(
+                          'No tienes reservas aún',
+                          style: CategoryListViewTheme.emptyCategoryTextStyle,
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              }
+              return ListView.builder(
+                padding: CategoryListViewTheme.listViewPadding,
+                itemCount: bookings.length,
+                itemBuilder: (context, index) {
+                  final booking = bookings[index];
+                  return GestureDetector(
                     onTap: () {
                       context.push('/booking/${booking.id}');
                     },
-                    child: Card(
-                      elevation: 4,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16.0),
-                      ),
+                    child: Container(
+                      margin: CategoryListViewTheme.cardMargin,
+                      decoration: CategoryListViewTheme.buildCardDecoration(),
                       child: Padding(
-                        padding: const EdgeInsets.all(16.0),
+                        padding: CategoryListViewTheme.cardPadding,
                         child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            // Icono del estado de la reserva
+                            // Estado visual
                             Container(
                               width: 60,
                               height: 60,
                               decoration: BoxDecoration(
                                 color: _getStatusColor(booking.estReserva),
-                                borderRadius: BorderRadius.circular(12.0),
+                                borderRadius: BorderRadius.circular(16.0),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: _getStatusColor(booking.estReserva),
+                                    blurRadius: 8,
+                                    offset: const Offset(0, 2),
+                                  ),
+                                ],
                               ),
                               child: Icon(
                                 _getStatusIcon(booking.estReserva),
                                 color: Colors.white,
-                                size: 30,
+                                size: 32,
                               ),
                             ),
-                            const SizedBox(width: 16.0),
+                            const SizedBox(width: 20),
                             Expanded(
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  // Mesa y número de reserva
                                   Text(
-                                    'MESA ${booking.mesaId} - Reserva #${booking.id}',
-                                    style: const TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold,
-                                    ),
+                                    'MESA ${booking.mesaId} · Reserva #${booking.id}',
+                                    style: CategoryListViewTheme.cardTitleStyle,
                                   ),
-                                  const SizedBox(height: 4),
-                                  // Estado de la reserva
+                                  SizedBox(height: CategoryListViewTheme.cardInternalSpacing),
                                   Container(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 8.0,
-                                      vertical: 4.0,
-                                    ),
+                                    padding: CategoryListViewTheme.cardUnavailablePadding,
+                                    margin: CategoryListViewTheme.cardUnavailableMargin,
                                     decoration: BoxDecoration(
-                                      color: _getStatusColor(booking.estReserva).withValues(alpha: 0.1),
+                                      color: _getStatusColor(booking.estReserva),
                                       borderRadius: BorderRadius.circular(8.0),
                                     ),
                                     child: Text(
                                       booking.statusDescription,
-                                      style: TextStyle(
-                                        fontSize: 12,
+                                      style: CategoryListViewTheme.cardUnavailableTextStyle.copyWith(
                                         color: _getStatusColor(booking.estReserva),
-                                        fontWeight: FontWeight.w600,
                                       ),
                                     ),
                                   ),
-                                  const SizedBox(height: 8),
-                                  // Fecha de la reserva
                                   Text(
                                     booking.formattedDateTime,
-                                    style: const TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w500,
-                                      color: Colors.blue,
+                                    style: CategoryListViewTheme.cardDescriptionStyle.copyWith(
+                                      color: CategoryListViewTheme.highlightColor,
+                                      fontWeight: FontWeight.w600,
                                     ),
                                   ),
-                                  const SizedBox(height: 4),
-                                  // Indicador de tiempo
+                                  SizedBox(height: 2),
                                   Text(
                                     _getTimeIndicator(booking),
-                                    style: TextStyle(
-                                      fontSize: 12,
-                                      color: Colors.grey[600],
+                                    style: CategoryListViewTheme.cardDescriptionStyle.copyWith(
+                                      color: CategoryListViewTheme.secondaryTextColor,
                                     ),
                                   ),
                                 ],
                               ),
                             ),
-                            const Icon(Icons.chevron_right),
+                            Padding(
+                              padding: const EdgeInsets.only(left: 8.0, top: 8.0),
+                              child: Icon(
+                                Icons.chevron_right,
+                                color: CategoryListViewTheme.inactiveIconColor,
+                                size: 28,
+                              ),
+                            ),
                           ],
                         ),
                       ),
                     ),
+                  );
+                },
+              );
+            } else if (snapshot.hasError) {
+              return Center(
+                child: Container(
+                  padding: const EdgeInsets.all(32),
+                  decoration: CategoryListViewTheme.emptyCategoryDecoration,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        Icons.error_outline,
+                        size: CategoryListViewTheme.emptyCategoryIconSize,
+                        color: CategoryListViewTheme.errorIconColor,
+                      ),
+                      SizedBox(height: CategoryListViewTheme.emptyCategorySpacing),
+                      Text(
+                        'Error al cargar reservas',
+                        style: CategoryListViewTheme.errorTitleStyle,
+                      ),
+                      SizedBox(height: 8),
+                      Text(
+                        '${snapshot.error}',
+                        textAlign: TextAlign.center,
+                        style: CategoryListViewTheme.errorDescriptionStyle,
+                      ),
+                      SizedBox(height: 16),
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: CategoryListViewTheme.accentColor,
+                          foregroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            final userId = int.parse(dotenv.env['DEFAULT_USER_ID'] ?? '1');
+                            _futureBookings = _bookingService.getBookingsByUser(userId);
+                          });
+                        },
+                        child: const Text('Reintentar'),
+                      ),
+                    ],
                   ),
-                );
-              },
-            );
-          } else if (snapshot.hasError) {
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    Icons.error_outline,
-                    size: 64,
-                    color: Colors.red[300],
-                  ),
-                  const SizedBox(height: 16),
-                  Text(
-                    'Error al cargar reservas',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.red[600],
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    '${snapshot.error}',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.red[500],
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  ElevatedButton(
-                    onPressed: () {
-                      setState(() {
-                        final userId = int.parse(dotenv.env['DEFAULT_USER_ID'] ?? '1');
-                        _futureBookings = _bookingService.getBookingsByUser(userId);
-                      });
-                    },
-                    child: const Text('Reintentar'),
-                  ),
-                ],
-              ),
-            );
-          }
-          return const Center(child: CircularProgressIndicator());
-        },
+                ),
+              );
+            }
+            return const Center(child: CircularProgressIndicator());
+          },
+        ),
       ),
     );
   }
 
-  // Método para obtener el color según el estado de la reserva
   Color _getStatusColor(String status) {
     switch (status.toUpperCase()) {
       case 'ACTIVA':
-        return Colors.green;
+        return CategoryListViewTheme.accentColor;
       case 'COMPLETADA':
-        return Colors.blue;
+        return CategoryListViewTheme.highlightColor;
       case 'CANCELADA':
-        return Colors.red;
+        return Colors.red[400]!;
       case 'PENDIENTE':
-        return Colors.orange;
+        return Colors.orange[600]!;
       default:
-        return Colors.grey;
+        return CategoryListViewTheme.inactiveIconColor;
     }
   }
 
-  // Método para obtener el icono según el estado de la reserva
   IconData _getStatusIcon(String status) {
     switch (status.toUpperCase()) {
       case 'ACTIVA':
         return Icons.event_available;
       case 'COMPLETADA':
-        return Icons.check_circle;
+        return Icons.check_circle_outline;
       case 'CANCELADA':
         return Icons.cancel;
       case 'PENDIENTE':
@@ -248,7 +292,7 @@ class _BookingListViewState extends State<BookingListView> {
     }
   }
 
-  // Método para obtener el indicador de tiempo
+
   String _getTimeIndicator(Booking booking) {
     if (booking.isToday) {
       return 'Hoy';
