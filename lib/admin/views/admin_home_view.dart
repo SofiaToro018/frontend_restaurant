@@ -263,10 +263,11 @@ class AdminHomeView extends StatelessWidget {
         borderRadius: BorderRadius.circular(20),
         onTap: () {
           // Navegar a la ruta correspondiente
-          if (route == '/admin/categories') {
-            context.push(route);
-          }
-          if (route == '/admin/items') {
+          if (route == '/admin/categories' ||
+              route == '/admin/items' ||
+              route == '/admin/orders' ||
+              route == '/admin/parking' ||
+              route == '/admin/tables') {
             context.push(route);
           } else {
             // Para las rutas que aún no están implementadas

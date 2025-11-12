@@ -126,7 +126,7 @@ class _ItemListViewAdminState extends State<ItemListViewAdmin> {
                       child: Row(
                         children: [
                           Icon(
-                            Icons.category,
+                            Icons.restaurant_menu,
                             color: const Color(0xFF2E7D32),
                             size: 24,
                           ),
