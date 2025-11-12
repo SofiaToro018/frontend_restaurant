@@ -14,6 +14,9 @@ import '../auth/views/login_view.dart';
 import '../auth/views/register_view.dart';
 import '../views/splash_intro/splash_intro_view.dart';
 import '../admin/views/admin_home_view.dart';
+import '../admin/views/category/category_list_view_admin.dart';
+import '../admin/views/category/category_create_view_admin.dart';
+import '../admin/views/category/category_edit_view_admin.dart';
 
 final GoRouter appRouter = GoRouter(
   
@@ -55,8 +58,25 @@ final GoRouter appRouter = GoRouter(
       builder: (context, state) => const AdminHomeView(),
     ),
     
+    // Rutas CRUD para categorías (Admin)
+    GoRoute(
+      path: '/admin/categories',
+      builder: (context, state) => const CategoryListViewAdmin(),
+    ),
+    GoRoute(
+      path: '/admin/categories/create',
+      builder: (context, state) => const CategoryCreateViewAdmin(),
+    ),
+    GoRoute(
+      path: '/admin/categories/edit/:id',
+      builder: (context, state) {
+        final categoryId = state.pathParameters['id']!;
+        return CategoryEditViewAdmin(categoryId: categoryId);
+      },
+    ),
+    
     // TODO: Agregar rutas CRUD para administración:
-    // - /admin/categories (gestión de categorías)
+    
     // - /admin/items (gestión de items del menú)
     // - /admin/orders (gestión de pedidos)
     // - /admin/bookings (gestión de reservas)

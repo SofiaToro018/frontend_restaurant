@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import '../../auth/services/auth_service.dart';
 import '../widgets/base_view_admin.dart';
 
@@ -261,13 +262,18 @@ class AdminHomeView extends StatelessWidget {
       child: InkWell(
         borderRadius: BorderRadius.circular(20),
         onTap: () {
-          // TODO: Navegar a la ruta cuando estén implementadas
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Función "$title" en desarrollo'),
-              backgroundColor: iconColor,
-            ),
-          );
+          // Navegar a la ruta correspondiente
+          if (route == '/admin/categories') {
+            context.push(route);
+          } else {
+            // Para las rutas que aún no están implementadas
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('Función "$title" en desarrollo'),
+                backgroundColor: iconColor,
+              ),
+            );
+          }
         },
         child: Container(
           padding: const EdgeInsets.all(16),
