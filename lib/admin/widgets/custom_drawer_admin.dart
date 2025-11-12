@@ -76,10 +76,10 @@ class CustomDrawerAdmin extends StatelessWidget {
 
             // Opción de cerrar sesión
             ListTile(
-              leading: const Icon(Icons.logout, color: Colors.red),
+              leading: const Icon(Icons.logout, color: Color(0xFF2E7D32)), // Verde
               title: const Text(
                 'Cerrar Sesión',
-                style: TextStyle(color: Colors.red),
+                style: TextStyle(color: Color(0xFF2E7D32)), // Verde
               ),
               onTap: () async {
                 // Mostrar confirmación
@@ -96,7 +96,7 @@ class CustomDrawerAdmin extends StatelessWidget {
                       TextButton(
                         onPressed: () => Navigator.pop(context, true),
                         style: TextButton.styleFrom(
-                          foregroundColor: Colors.red,
+                          foregroundColor: const Color(0xFF2E7D32), // Verde
                         ),
                         child: const Text('Cerrar Sesión'),
                       ),

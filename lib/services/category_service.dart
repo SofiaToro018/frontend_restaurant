@@ -74,4 +74,185 @@ class CategoryService {
       throw Exception('Error al obtener los items de la categoría: $e');
     }
   }
+
+  //! createCategory
+  /// Crea una nueva categoría en la API.
+  /// Recibe un objeto Category y una URL de imagen opcional.
+  /// Lanza una excepción con el mensaje de error de la API si falla.
+  Future<bool> createCategory(
+    Category category, {
+    String? imageUrl,
+  }) async {
+    try {
+      final uri = Uri.parse('$apiUrl/categoria-menu-service/categoria');
+
+      // Preparar el body con los datos de la categoría
+      final Map<String, dynamic> body = {
+        'nombre': category.nombre,
+        'restaurante': {
+          'id': int.parse(dotenv.env['DEFAULT_RESTAURANT_ID'] ?? '1'),
+        },
+      };
+
+      // Agregar imagen si existe
+      if (imageUrl != null && imageUrl.isNotEmpty) {
+        body['imgCatMenu'] = imageUrl;
+      }
+
+      if (kDebugMode) {
+        print('=== CREATE CATEGORY REQUEST ===');
+        print('URL: $uri');
+        print('Body: ${jsonEncode(body)}');
+      }
+
+      final response = await http.post(
+        uri,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode(body),
+      );
+
+      if (kDebugMode) {
+        print('Response Status: ${response.statusCode}');
+        print('Response Body: ${response.body}');
+      }
+
+      if (response.statusCode == 201 || response.statusCode == 200) {
+        return true;
+      } else {
+        // Intentar extraer el mensaje de error de la API
+        final errorData = jsonDecode(response.body);
+        String errorMessage = 'Error al crear categoría';
+
+        // Verificar si hay errores de validación específicos
+        if (errorData['errors'] != null) {
+          final errors = errorData['errors'] as Map<String, dynamic>;
+          // Construir mensaje con todos los errores
+          List<String> errorMessages = [];
+          errors.forEach((field, messages) {
+            if (messages is List) {
+              errorMessages.addAll(messages.cast<String>());
+            }
+          });
+          errorMessage = errorMessages.join('\n');
+        } else if (errorData['message'] != null) {
+          errorMessage = errorData['message'];
+        }
+
+        throw Exception(errorMessage);
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print('Error en createCategory: $e');
+      }
+      // Si ya es una excepción con mensaje de la API, relanzarla
+      if (e is Exception) rethrow;
+      throw Exception('Error de conexión: $e');
+    }
+  }
+
+  //! updateCategory
+  /// Actualiza una categoría en la API.
+  /// Recibe un objeto Category y una URL de imagen opcional.
+  /// Lanza una excepción con el mensaje de error de la API si falla.
+  Future<bool> updateCategory(
+    Category category, {
+    String? imageUrl,
+  }) async {
+    try {
+      final uri = Uri.parse('$apiUrl/categoria-menu-service/categoria');
+
+      // Preparar el body con los datos de la categoría
+      // El backend usa el mismo método save() para create y update
+      // Necesita el objeto completo como lo espera JPA
+      final Map<String, dynamic> body = {
+        'id': category.id,
+        'nombre': category.nombre,
+      };
+
+      // Agregar imagen si existe
+      if (imageUrl != null && imageUrl.isNotEmpty) {
+        body['imgCatMenu'] = imageUrl;
+      } else if (category.imgCatMenu.isNotEmpty) {
+        // Mantener la imagen actual si no se proporciona una nueva
+        body['imgCatMenu'] = category.imgCatMenu;
+      }
+      
+      // Agregar el restaurante como objeto simple con solo el ID
+      // JPA lo convertirá en una referencia usando el ID
+      body['restaurante'] = {
+        'id': int.parse(dotenv.env['DEFAULT_RESTAURANT_ID'] ?? '1'),
+      };
+
+      if (kDebugMode) {
+        print('=== UPDATE CATEGORY REQUEST ===');
+        print('URL: $uri');
+        print('Body: ${jsonEncode(body)}');
+      }
+
+      final response = await http.put(
+        uri,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode(body),
+      );
+
+      if (kDebugMode) {
+        print('Response Status: ${response.statusCode}');
+        print('Response Body: ${response.body}');
+      }
+
+      if (response.statusCode == 200) {
+        return true;
+      } else {
+        // Intentar extraer el mensaje de error de la API
+        final errorData = jsonDecode(response.body);
+        String errorMessage = 'Error al actualizar categoría';
+
+        // Verificar si hay errores de validación específicos
+        if (errorData['errors'] != null) {
+          final errors = errorData['errors'] as Map<String, dynamic>;
+          // Construir mensaje con todos los errores
+          List<String> errorMessages = [];
+          errors.forEach((field, messages) {
+            if (messages is List) {
+              errorMessages.addAll(messages.cast<String>());
+            }
+          });
+          errorMessage = errorMessages.join('\n');
+        } else if (errorData['message'] != null) {
+          errorMessage = errorData['message'];
+        }
+
+        throw Exception(errorMessage);
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print('Error en updateCategory: $e');
+      }
+      // Si ya es una excepción con mensaje de la API, relanzarla
+      if (e is Exception) rethrow;
+      throw Exception('Error de conexión: $e');
+    }
+  }
+
+  //! deleteCategory
+  /// Realiza un borrado lógico de una categoría por ID.
+  /// Retorna true si fue exitoso.
+  Future<bool> deleteCategory(int id) async {
+    try {
+      final response = await http.delete(
+        Uri.parse('$apiUrl/categoria-menu-service/categorias/$id'),
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 204) {
+        return true;
+      } else {
+        final errorData = jsonDecode(response.body);
+        String errorMessage = errorData['message'] ?? 'Error al eliminar la categoría';
+        throw Exception(errorMessage);
+      }
+    } catch (e) {
+      if (e is Exception) rethrow;
+      throw Exception('Error de conexión: $e');
+    }
+  }
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:frontend_restaurant/themes/custom_drawer_themes.dart';
+import '../auth/services/auth_service.dart';
 
 class CustomDrawer extends StatelessWidget {
   const CustomDrawer({super.key});
@@ -190,6 +191,48 @@ class CustomDrawer extends StatelessWidget {
                   content: Text('Funcionalidad en desarrollo'),
                 ),
               );
+            },
+          ),
+          
+          const Divider(),
+          
+          // Opción: Cerrar Sesión
+          ListTile(
+            leading: const Icon(Icons.logout, color: Color(0xFF2E7D32)),
+            title: const Text(
+              'Cerrar Sesión',
+              style: TextStyle(color: Color(0xFF2E7D32)),
+            ),
+            onTap: () async {
+              // Mostrar confirmación
+              final shouldLogout = await showDialog<bool>(
+                context: context,
+                builder: (context) => AlertDialog(
+                  title: const Text('Cerrar Sesión'),
+                  content: const Text('¿Estás seguro que deseas cerrar sesión?'),
+                  actions: [
+                    TextButton(
+                      onPressed: () => Navigator.pop(context, false),
+                      child: const Text('Cancelar'),
+                    ),
+                    TextButton(
+                      onPressed: () => Navigator.pop(context, true),
+                      style: TextButton.styleFrom(
+                        foregroundColor: const Color(0xFF2E7D32), // Verde
+                      ),
+                      child: const Text('Cerrar Sesión'),
+                    ),
+                  ],
+                ),
+              );
+
+              if (shouldLogout == true && context.mounted) {
+                final authService = AuthService();
+                await authService.logout();
+                if (context.mounted) {
+                  context.go('/login');
+                }
+              }
             },
           ),
         ],
