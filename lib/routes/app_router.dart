@@ -29,6 +29,9 @@ import '../admin/views/parking/parking_edit_view_admin.dart';
 import '../admin/views/tables/table_list_view_admin.dart';
 import '../admin/views/tables/table_create_view_admin.dart';
 import '../admin/views/tables/table_edit_view_admin.dart';
+import '../admin/views/events/event_list_view_admin.dart';
+import '../admin/views/events/event_create_view_admin.dart';
+import '../admin/views/events/event_edit_view_admin.dart';
 
 final GoRouter appRouter = GoRouter(
   
@@ -152,6 +155,23 @@ final GoRouter appRouter = GoRouter(
       builder: (context, state) {
         final tableId = state.pathParameters['id']!;
         return TableEditViewAdmin(tableId: tableId);
+      },
+    ),
+    
+    // Rutas CRUD para eventos (Admin)
+    GoRoute(
+      path: '/admin/events',
+      builder: (context, state) => const EventListViewAdmin(),
+    ),
+    GoRoute(
+      path: '/admin/events/create',
+      builder: (context, state) => const EventCreateViewAdmin(),
+    ),
+    GoRoute(
+      path: '/admin/events/edit/:id',
+      builder: (context, state) {
+        final eventId = state.pathParameters['id']!;
+        return EventEditViewAdmin(eventId: eventId);
       },
     ),
     

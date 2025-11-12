@@ -199,10 +199,10 @@ class AdminHomeView extends StatelessWidget {
         ),
         _buildActionCard(
           context: context,
-          icon: Icons.people,
-          title: 'Gestionar\nUsuarios',
+          icon: Icons.event,
+          title: 'Gestionar\nEventos',
           color: Colors.purple,
-          route: '/admin/users',
+          route: '/admin/events',
         ),
         _buildActionCard(
           context: context,
@@ -267,7 +267,8 @@ class AdminHomeView extends StatelessWidget {
               route == '/admin/items' ||
               route == '/admin/orders' ||
               route == '/admin/parking' ||
-              route == '/admin/tables') {
+              route == '/admin/tables' ||
+              route == '/admin/events') {
             context.push(route);
           } else {
             // Para las rutas que aún no están implementadas
