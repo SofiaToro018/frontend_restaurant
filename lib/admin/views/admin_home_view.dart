@@ -265,6 +265,9 @@ class AdminHomeView extends StatelessWidget {
           // Navegar a la ruta correspondiente
           if (route == '/admin/categories') {
             context.push(route);
+          }
+          if (route == '/admin/items') {
+            context.push(route);
           } else {
             // Para las rutas que aún no están implementadas
             ScaffoldMessenger.of(context).showSnackBar(
