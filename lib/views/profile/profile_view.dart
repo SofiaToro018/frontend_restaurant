@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../models/profile.dart';
 import '../../services/profile_service.dart';
+import '../../auth/services/auth_service.dart';
+import '../../auth/models/usuario.dart';
 import '../../themes/profile_theme/profile_view_theme.dart';
 import '../../widgets/base_view.dart';
 
@@ -16,16 +19,35 @@ class ProfileView extends StatefulWidget {
 class _ProfileViewState extends State<ProfileView> {
   //* Se crea una instancia de la clase ProfileService
   final ProfileService _profileService = ProfileService();
+  // Servicio de autenticación para obtener el usuario que inició sesión
+  final AuthService _authService = AuthService();
+  // Listener para cambios en el estado de autenticación
+  void _onAuthChanged(Usuario? usuario) {
+    final userId = usuario?.id ?? int.parse(dotenv.env['DEFAULT_USER_ID'] ?? '1');
+    setState(() {
+      _futureProfile = _profileService.getUserById(userId);
+    });
+  }
   //* Se declara una variable de tipo Future que contendrá el perfil del usuario
   late Future<Profile> _futureProfile;
 
   @override
   void initState() {
     super.initState();
-    //! Se llama al método getUserById de la clase ProfileService
-    // Usar el usuario por defecto del .env hasta que implementemos login
-    final userId = int.parse(dotenv.env['DEFAULT_USER_ID'] ?? '1');
-    _futureProfile = _profileService.getUserById(userId);
+    // Intentar usar el usuario autenticado; si no hay, usar DEFAULT_USER_ID
+    final current = _authService.currentUsuario;
+    final initialUserId = current?.id ?? int.parse(dotenv.env['DEFAULT_USER_ID'] ?? '1');
+    _futureProfile = _profileService.getUserById(initialUserId);
+    // Escuchar cambios en el estado de autenticación para actualizar la vista
+    _authService.addAuthStateListener(_onAuthChanged);
+
+  }
+
+  @override
+  void dispose() {
+    // Remover listener de autenticación
+    _authService.removeAuthStateListener(_onAuthChanged);
+    super.dispose();
   }
 
   @override
@@ -48,19 +70,37 @@ class _ProfileViewState extends State<ProfileView> {
                 children: [
                   // Card principal con información del perfil
                   _buildProfileCard(profile),
-                  
-                  SizedBox(height: ProfileViewTheme.cardSpacing),
-                  
+                  // separar con un divisor sutil y menos espacio
+                  SizedBox(height: ProfileViewTheme.cardSpacing * 0.4),
+                  Divider(
+                    color: ProfileViewTheme.dividerColor,
+                    thickness: 1,
+                    height: 1,
+                  ),
+                  SizedBox(height: ProfileViewTheme.cardSpacing * 0.4),
+
                   // Card con información de contacto
                   _buildContactCard(profile),
-                  
-                  SizedBox(height: ProfileViewTheme.cardSpacing),
-                  
+                  // separar con un divisor sutil
+                  SizedBox(height: ProfileViewTheme.cardSpacing * 0.4),
+                  Divider(
+                    color: ProfileViewTheme.dividerColor,
+                    thickness: 1,
+                    height: 1,
+                  ),
+                  SizedBox(height: ProfileViewTheme.cardSpacing * 0.4),
+
                   // Card con información del rol y estado
                   _buildRoleStatusCard(profile),
-                  
-                  SizedBox(height: ProfileViewTheme.cardSpacing),
-                  
+                  // pequeño espacio antes de los botones y divisor
+                  SizedBox(height: ProfileViewTheme.cardSpacing * 0.35),
+                  Divider(
+                    color: ProfileViewTheme.dividerColor,
+                    thickness: 1,
+                    height: 1,
+                  ),
+                  SizedBox(height: ProfileViewTheme.cardSpacing * 0.45),
+
                   // Botones de acción
                   _buildActionButtons(profile),
                 ],
@@ -337,13 +377,7 @@ class _ProfileViewState extends State<ProfileView> {
           width: double.infinity,
           child: ElevatedButton.icon(
             onPressed: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: const Text('Edición de perfil próximamente'),
-                  backgroundColor: ProfileViewTheme.primaryOrangeShade600,
-                  behavior: SnackBarBehavior.floating,
-                ),
-              );
+              context.push('/profile/edit/${profile.id}');
             },
             icon: const Icon(Icons.edit),
             label: Text('Editar Perfil', style: ProfileViewTheme.primaryButtonTextStyle),
@@ -403,7 +437,7 @@ class _ProfileViewState extends State<ProfileView> {
             ElevatedButton.icon(
               onPressed: () {
                 setState(() {
-                  final userId = int.parse(dotenv.env['DEFAULT_USER_ID'] ?? '1');
+                  final userId = _authService.currentUsuario?.id ?? int.parse(dotenv.env['DEFAULT_USER_ID'] ?? '1');
                   _futureProfile = _profileService.getUserById(userId);
                 });
               },

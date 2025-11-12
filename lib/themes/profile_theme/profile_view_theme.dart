@@ -1,73 +1,67 @@
 import 'package:flutter/material.dart';
+import '../category_theme/category_list_view_theme.dart';
 
 class ProfileViewTheme {
   // ========== PALETA DE COLORES CONSISTENTE ==========
   static const Color primaryOrange = Color(0xFFFF6B35);
-  static const Color primaryOrangeLight = Color(0xFFFFE5D9);
-  static const Color primaryOrangeDark = Color(0xFFE55A2B);
-  static const Color primaryOrangeShade50 = Color(0xFFFFF3F0);
-  static const Color primaryOrangeShade100 = Color(0xFFFFE0D1);
+  static const Color primaryOrangeLight = Color(0xFFFFF2EE);
+  static const Color primaryOrangeDark = Color(0xFFD3542A);
+  static const Color primaryOrangeShade50 = Color(0xFFFFF7F5);
+  static const Color primaryOrangeShade100 = Color(0xFFFFEDE8);
   static const Color primaryOrangeShade600 = Color(0xFFE55A2B);
   static const Color primaryOrangeShade700 = Color(0xFFCC4A1F);
   static const Color primaryOrangeShade800 = Color(0xFFB23F1A);
   static const Color primaryOrangeShade900 = Color(0xFF993316);
-  
-  static const Color textPrimary = Color(0xFF2D3748);
-  static const Color textSecondary = Color(0xFF718096);
-  static const Color textMuted = Color(0xFFA0AEC0);
-  static const Color backgroundColor = Color(0xFFFAFAFA);
+
+  // Reuse category theme colors so profile visually matches /menu
+  static const Color textPrimary = CategoryListViewTheme.primaryTextColor;
+  static const Color textSecondary = CategoryListViewTheme.secondaryTextColor;
+  static const Color textMuted = Color(0xFF90A4AE);
+  static const Color backgroundColor = CategoryListViewTheme.primaryBackgroundColor;
+  // Divider and card border explicit colors
+  static const Color dividerColor = Color(0xFFE0E6EA);
+  static const Color cardBorderColor = Color(0xFFECEFF3);
   
   // ========== CONFIGURACIÓN GENERAL ==========
   static const EdgeInsets mainPadding = EdgeInsets.all(16.0);
-  static const double cardSpacing = 20.0;
+  static const double cardSpacing = 18.0;
   
   // ========== PROFILE CARD PRINCIPAL ULTRA ELEGANTE ==========
-  static const double profileCardElevation = 12.0;
-  static const double profileCardBorderRadius = 24.0;
-  static const EdgeInsets profileCardPadding = EdgeInsets.all(32.0);
+  static const double profileCardElevation = 4.0; // align with menu cards
+  static const double profileCardBorderRadius = CategoryListViewTheme.cardBorderRadius;
+  static const EdgeInsets profileCardPadding = CategoryListViewTheme.cardPadding;
   
   // Avatar más elegante
-  static const double avatarSize = 120.0;
-  static const double avatarBorderRadius = 60.0;
-  static const double avatarShadowBlurRadius = 24.0;
-  static const double avatarShadowSpreadRadius = 8.0;
-  static const double avatarShadowOpacity = 0.4;
-  static const double avatarBorderWidth = 4.0;
+  static const double avatarSize = 96.0;
+  static const double avatarBorderRadius = 48.0;
+  static const double avatarShadowBlurRadius = 16.0;
+  static const double avatarShadowSpreadRadius = 2.0;
+  static const double avatarShadowOpacity = 0.22;
+  static const double avatarBorderWidth = 3.0;
   
   // Estilos de texto del avatar
   static const TextStyle avatarTextStyle = TextStyle(
-    fontSize: 42,
-    fontWeight: FontWeight.bold,
+    fontSize: 38,
+    fontWeight: FontWeight.w700,
     color: Colors.white,
-    letterSpacing: 2.0,
+    letterSpacing: 1.6,
   );
   
   // Nombre y email con más elegancia
-  static const double nameSpacing = 24.0;
-  static const double emailSpacing = 12.0;
-  static const double statusSpacing = 20.0;
+  static const double nameSpacing = 18.0;
+  static const double emailSpacing = 8.0;
+  static const double statusSpacing = 14.0;
   
-  static const TextStyle nameStyle = TextStyle(
-    fontFamily: 'Georgia',
-    fontSize: 32,
-    fontWeight: FontWeight.bold,
-    color: textPrimary,
-    letterSpacing: 0.5,
-    height: 1.2,
-  );
-  
-  static TextStyle emailStyle = TextStyle(
-    fontSize: 18,
-    color: Colors.grey[600],
-    fontWeight: FontWeight.w500,
-  );
+  static TextStyle nameStyle = CategoryListViewTheme.cardTitleStyle.copyWith(color: textPrimary);
+
+  static TextStyle emailStyle = CategoryListViewTheme.cardDescriptionStyle.copyWith(color: textSecondary);
   
   // Status badge más elegante
-  static const EdgeInsets statusPadding = EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0);
-  static const double statusBorderRadius = 16.0;
+  static const EdgeInsets statusPadding = EdgeInsets.symmetric(horizontal: 14.0, vertical: 8.0);
+  static const double statusBorderRadius = 12.0;
   static const double statusBorderWidth = 0.0; // Sin borde, más moderno
-  static const double statusIconSize = 18.0;
-  static const double statusIconSpacing = 8.0;
+  static const double statusIconSize = 16.0;
+  static const double statusIconSpacing = 6.0;
   
   static const TextStyle statusTextStyle = TextStyle(
     fontSize: 13,
@@ -76,9 +70,9 @@ class ProfileViewTheme {
   );
   
   // ========== CONTACT CARD ==========
-  static const double contactCardElevation = 4.0;
-  static const double contactCardBorderRadius = 16.0;
-  static const EdgeInsets contactCardPadding = EdgeInsets.all(20.0);
+  static const double contactCardElevation = 2.0;
+  static const double contactCardBorderRadius = CategoryListViewTheme.cardBorderRadius;
+  static const EdgeInsets contactCardPadding = CategoryListViewTheme.cardPadding;
   
   // Header del contact card
   static const double contactHeaderIconSize = 24.0;
@@ -93,9 +87,9 @@ class ProfileViewTheme {
   );
   
   // ========== ROLE STATUS CARD ==========
-  static const double roleCardElevation = 4.0;
-  static const double roleCardBorderRadius = 16.0;
-  static const EdgeInsets roleCardPadding = EdgeInsets.all(20.0);
+  static const double roleCardElevation = 2.0;
+  static const double roleCardBorderRadius = CategoryListViewTheme.cardBorderRadius;
+  static const EdgeInsets roleCardPadding = CategoryListViewTheme.cardPadding;
   
   // Header del role card
   static const double roleHeaderIconSize = 24.0;
@@ -110,18 +104,14 @@ class ProfileViewTheme {
   );
   
   // ========== INFO ROWS ==========
-  static const EdgeInsets infoRowPadding = EdgeInsets.all(12.0);
-  static const double infoRowBorderRadius = 8.0;
-  static const double infoRowIconSize = 20.0;
+  static const EdgeInsets infoRowPadding = EdgeInsets.symmetric(horizontal: 12.0, vertical: 10.0);
+  static const double infoRowBorderRadius = 10.0;
+  static const double infoRowIconSize = 18.0;
   static const double infoRowIconSpacing = 12.0;
-  static const double infoRowLabelSpacing = 2.0;
-  static const double infoRowOpacity = 0.1;
-  
-  static TextStyle infoRowLabelStyle = TextStyle(
-    fontSize: 12,
-    color: Colors.grey[600],
-    fontWeight: FontWeight.w500,
-  );
+  static const double infoRowLabelSpacing = 4.0;
+  static const double infoRowOpacity = 0.06;
+
+  static TextStyle infoRowLabelStyle = CategoryListViewTheme.cardCategoryStyle.copyWith(color: textSecondary);
   
   static const TextStyle infoRowValueStyle = TextStyle(
     fontSize: 14,
@@ -138,23 +128,23 @@ class ProfileViewTheme {
   
   static TextStyle permissionLabelStyle = TextStyle(
     fontSize: 12,
-    color: Colors.grey[600],
-    fontWeight: FontWeight.w500,
+    color: textSecondary,
+    fontWeight: FontWeight.w600,
   );
   
   static const TextStyle permissionChipTextStyle = TextStyle(
     fontSize: 12,
-    color: Colors.indigo,
+    color: CategoryListViewTheme.accentColor,
     fontWeight: FontWeight.w600,
   );
   
   // ========== ACTION BUTTONS ==========
   static const double buttonSpacing = 12.0;
-  static const EdgeInsets buttonPadding = EdgeInsets.symmetric(vertical: 16.0);
+  static const EdgeInsets buttonPadding = EdgeInsets.symmetric(vertical: 14.0);
   static const double buttonBorderRadius = 12.0;
   
   // Primary button
-  static const Color primaryButtonColor = primaryOrangeShade600;
+  static const Color primaryButtonColor = CategoryListViewTheme.accentColor;
   static const Color primaryButtonTextColor = Colors.white;
   static const double primaryButtonElevation = 4.0;
   
@@ -165,9 +155,9 @@ class ProfileViewTheme {
   );
   
   // Secondary button
-  static const Color secondaryButtonColor = primaryOrangeShade50;
-  static const Color secondaryButtonBorderColor = primaryOrange;
-  static const Color secondaryButtonTextColor = primaryOrangeShade700;
+  static const Color secondaryButtonColor = Colors.white;
+  static const Color secondaryButtonBorderColor = CategoryListViewTheme.viewAllButtonBorderColor;
+  static const Color secondaryButtonTextColor = CategoryListViewTheme.accentColor;
   
   static const TextStyle secondaryButtonTextStyle = TextStyle(
     fontSize: 16,
@@ -182,9 +172,9 @@ class ProfileViewTheme {
   static const double errorDescriptionSpacing = 12.0;
   static const double errorButtonSpacing = 24.0;
   
-  static Color errorIconColor = Colors.red[300]!;
-  static Color errorTitleColor = Colors.red[600]!;
-  static Color errorDescriptionColor = Colors.red[500]!;
+  static Color errorIconColor = CategoryListViewTheme.errorIconColor;
+  static Color errorTitleColor = CategoryListViewTheme.errorTitleColor;
+  static Color errorDescriptionColor = CategoryListViewTheme.errorDescriptionColor;
   
   static TextStyle errorTitleStyle = TextStyle(
     fontFamily: 'Georgia',
@@ -227,190 +217,47 @@ class ProfileViewTheme {
   
   // ========== DECORACIONES ULTRA ELEGANTES ==========
   static BoxDecoration get profileCardDecoration {
-    return BoxDecoration(
-      gradient: LinearGradient(
-        begin: Alignment.topLeft,
-        end: Alignment.bottomRight,
-        colors: [
-          Colors.white,
-          primaryOrangeShade50.withValues(alpha: 0.3),
-        ],
-      ),
-      borderRadius: BorderRadius.circular(profileCardBorderRadius),
-      boxShadow: [
-        BoxShadow(
-          color: primaryOrange.withValues(alpha: 0.15),
-          blurRadius: 20,
-          offset: const Offset(0, 8),
-          spreadRadius: 0,
-        ),
-        BoxShadow(
-          color: Colors.black.withValues(alpha: 0.05),
-          blurRadius: 10,
-          offset: const Offset(0, 4),
-          spreadRadius: 0,
-        ),
-      ],
-      border: Border.all(
-        color: primaryOrange.withValues(alpha: 0.1),
-        width: 1,
-      ),
-    );
+    return CategoryListViewTheme.buildCardDecoration();
   }
   
   static BoxDecoration avatarDecoration(Color roleColor) {
-    return BoxDecoration(
+    return CategoryListViewTheme.buildCardButtonSmallDecoration().copyWith(
       gradient: LinearGradient(
-        begin: Alignment.topLeft,
-        end: Alignment.bottomRight,
-        colors: [
-          roleColor,
-          roleColor.withValues(alpha: 0.8),
-        ],
+        begin: Alignment.topCenter,
+        end: Alignment.bottomCenter,
+    colors: [roleColor, roleColor.withValues(alpha: 0.88)],
       ),
       borderRadius: BorderRadius.circular(avatarBorderRadius),
-      boxShadow: [
-        BoxShadow(
-          color: roleColor.withValues(alpha: avatarShadowOpacity),
-          blurRadius: avatarShadowBlurRadius,
-          spreadRadius: avatarShadowSpreadRadius,
-          offset: const Offset(0, 8),
-        ),
-        BoxShadow(
-          color: Colors.black.withValues(alpha: 0.1),
-          blurRadius: 12,
-          offset: const Offset(0, 4),
-        ),
-      ],
-      border: Border.all(
-        color: Colors.white,
-        width: avatarBorderWidth,
-      ),
+      border: Border.all(color: Colors.white, width: avatarBorderWidth),
     );
   }
   
   static BoxDecoration statusDecoration(Color statusColor) {
-    return BoxDecoration(
-      gradient: LinearGradient(
-        begin: Alignment.topLeft,
-        end: Alignment.bottomRight,
-        colors: [
-          statusColor.withValues(alpha: 0.15),
-          statusColor.withValues(alpha: 0.05),
-        ],
-      ),
+    return CategoryListViewTheme.newNotAvailableDecoration.copyWith(
+  color: statusColor.withValues(alpha: 0.06),
       borderRadius: BorderRadius.circular(statusBorderRadius),
-      boxShadow: [
-        BoxShadow(
-          color: statusColor.withValues(alpha: 0.2),
-          blurRadius: 8,
-          offset: const Offset(0, 2),
-        ),
-      ],
+    
     );
   }
   
   static BoxDecoration get contactCardDecoration {
-    return BoxDecoration(
-      gradient: LinearGradient(
-        begin: Alignment.topLeft,
-        end: Alignment.bottomRight,
-        colors: [
-          Colors.white,
-          primaryOrangeShade50.withValues(alpha: 0.1),
-        ],
-      ),
-      borderRadius: BorderRadius.circular(contactCardBorderRadius),
-      boxShadow: [
-        BoxShadow(
-          color: primaryOrange.withValues(alpha: 0.08),
-          blurRadius: 12,
-          offset: const Offset(0, 6),
-        ),
-        BoxShadow(
-          color: Colors.black.withValues(alpha: 0.03),
-          blurRadius: 6,
-          offset: const Offset(0, 2),
-        ),
-      ],
-      border: Border.all(
-        color: primaryOrange.withValues(alpha: 0.08),
-        width: 1,
-      ),
-    );
+    return CategoryListViewTheme.buildCardDecoration();
   }
   
   static BoxDecoration get roleCardDecoration {
-    return BoxDecoration(
-      gradient: LinearGradient(
-        begin: Alignment.topLeft,
-        end: Alignment.bottomRight,
-        colors: [
-          Colors.white,
-          primaryOrangeShade50.withValues(alpha: 0.1),
-        ],
-      ),
-      borderRadius: BorderRadius.circular(roleCardBorderRadius),
-      boxShadow: [
-        BoxShadow(
-          color: primaryOrange.withValues(alpha: 0.08),
-          blurRadius: 12,
-          offset: const Offset(0, 6),
-        ),
-        BoxShadow(
-          color: Colors.black.withValues(alpha: 0.03),
-          blurRadius: 6,
-          offset: const Offset(0, 2),
-        ),
-      ],
-      border: Border.all(
-        color: primaryOrange.withValues(alpha: 0.08),
-        width: 1,
-      ),
-    );
+    return CategoryListViewTheme.buildCardDecoration();
   }
   
   static BoxDecoration infoRowDecoration(Color color) {
-    return BoxDecoration(
-      gradient: LinearGradient(
-        begin: Alignment.topLeft,
-        end: Alignment.bottomRight,
-        colors: [
-          color.withValues(alpha: 0.08),
-          color.withValues(alpha: 0.03),
-        ],
-      ),
+    return CategoryListViewTheme.buildCardDecoration().copyWith(
+      color: CategoryListViewTheme.newMenuItemBackgroundColor,
       borderRadius: BorderRadius.circular(infoRowBorderRadius),
-      border: Border.all(
-        color: color.withValues(alpha: 0.1),
-        width: 1,
-      ),
+  border: Border.all(color: color.withValues(alpha: 0.06), width: 1),
     );
   }
   
   static BoxDecoration get permissionChipDecoration {
-    return BoxDecoration(
-      gradient: LinearGradient(
-        begin: Alignment.topLeft,
-        end: Alignment.bottomRight,
-        colors: [
-          permissionColor.withValues(alpha: 0.12),
-          permissionColor.withValues(alpha: 0.06),
-        ],
-      ),
-      borderRadius: BorderRadius.circular(permissionChipBorderRadius),
-      boxShadow: [
-        BoxShadow(
-          color: permissionColor.withValues(alpha: 0.1),
-          blurRadius: 4,
-          offset: const Offset(0, 2),
-        ),
-      ],
-      border: Border.all(
-        color: permissionColor.withValues(alpha: 0.2),
-        width: permissionChipBorderWidth,
-      ),
-    );
+    return CategoryListViewTheme.buildCardCategoryDecoration();
   }
   
   // ========== BUTTON STYLES ==========
@@ -423,7 +270,7 @@ class ProfileViewTheme {
         borderRadius: BorderRadius.circular(buttonBorderRadius),
       ),
       elevation: primaryButtonElevation,
-      shadowColor: primaryOrange.withValues(alpha: 0.3),
+      shadowColor: const Color.fromARGB(255, 53, 255, 77).withValues(alpha: 0.3),
     );
   }
   

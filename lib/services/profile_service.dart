@@ -287,11 +287,5 @@ class ProfileService {
     return await updateUser(updatedUser);
   }
 
-  // Método de utilidad para actualizar perfil (sin password)
-  Future<Profile> updateProfile(Profile user) async {
-    // Crear copia sin password para actualización de perfil
-    final profileUpdate = user.copyWith();
-    profileUpdate.password = null; // Asegurar que no se envíe password
-    return await updateUser(profileUpdate);
-  }
+  
 }

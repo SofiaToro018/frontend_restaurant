@@ -17,7 +17,6 @@ class CategoryListView extends StatefulWidget {
 
 class _CategoryListViewState extends State<CategoryListView> {
   final CategoryService _categoryService = CategoryService();
-
   late Future<List<Category>> _futureCategories;
 
   @override
@@ -32,44 +31,48 @@ class _CategoryListViewState extends State<CategoryListView> {
 
   @override
   Widget build(BuildContext context) {
-    return BaseView(
-      title: 'Menú',
-      body: Container(
-        color: CategoryListViewTheme.backgroundColor,
-        child: FutureBuilder<List<Category>>(
-          future: _futureCategories,
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              final categories = snapshot.data!;
-              if (categories.isEmpty) {
-                return _buildEmptyView();
-              }
-              return CustomScrollView(
-                slivers: [
-                  // Banner superior elegante
-                  _buildBannerSection(),
-                  
-                  // Contenido principal
-                  SliverToBoxAdapter(
-                    child: Padding(
-                      padding: CategoryListViewTheme.mainContentPadding,
-                      child: Column(
-                        children: [
-                          const SizedBox(height: CategoryListViewTheme.mainContentTopSpacing),
-                          ...categories.map((category) => _buildCategorySection(category)),
-                        ],
+    return Stack(
+      children: [
+        BaseView(
+          title: 'Menú',
+          body: Container(
+            color: CategoryListViewTheme.backgroundColor,
+            child: FutureBuilder<List<Category>>(
+              future: _futureCategories,
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  final categories = snapshot.data!;
+                  if (categories.isEmpty) {
+                    return _buildEmptyView();
+                  }
+                  return CustomScrollView(
+                    slivers: [
+                      // Banner superior elegante
+                      _buildBannerSection(),
+                      
+                      // Contenido principal
+                      SliverToBoxAdapter(
+                        child: Padding(
+                          padding: CategoryListViewTheme.mainContentPadding,
+                          child: Column(
+                            children: [
+                              const SizedBox(height: CategoryListViewTheme.mainContentTopSpacing),
+                              ...categories.map((category) => _buildCategorySection(category)),
+                            ],
+                          ),
+                        ),
                       ),
-                    ),
-                  ),
-                ],
-              );
-            } else if (snapshot.hasError) {
-              return _buildErrorView(snapshot.error);
-            }
-            return const Center(child: CircularProgressIndicator());
-          },
+                    ],
+                  );
+                } else if (snapshot.hasError) {
+                  return _buildErrorView(snapshot.error);
+                }
+                return const Center(child: CircularProgressIndicator());
+              },
+            ),
+          ),
         ),
-      ),
+      ],
     );
   }
 

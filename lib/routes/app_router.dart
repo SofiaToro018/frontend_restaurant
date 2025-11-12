@@ -9,20 +9,28 @@ import '../views/booking/booking_detail_view.dart';
 import '../views/audit_log/audit_log_list_view.dart';
 import '../views/audit_log/audit_log_detail_view.dart';
 import '../views/profile/profile_view.dart';
+import '../views/profile/profile_edit_view.dart';
 import '../auth/views/login_view.dart';
 import '../auth/views/register_view.dart';
 import '../views/splash_intro/splash_intro_view.dart';
+import '../admin/views/admin_home_view.dart';
+import '../admin/views/category/category_list_view_admin.dart';
+import '../admin/views/category/category_create_view_admin.dart';
+import '../admin/views/category/category_edit_view_admin.dart';
+import '../admin/views/item_category/item_list_view_admin.dart';
+import '../admin/views/item_category/item_create_view_admin.dart';
+import '../admin/views/item_category/item_edit_view_admin.dart';
 
 final GoRouter appRouter = GoRouter(
-  // TODO: TEMPORAL - Cambiar de vuelta a '/splash' después del desarrollo
+  
   // ORIGINAL: initialLocation: '/splash',
-  initialLocation: '/menu', // TEMPORAL para desarrollo
+  initialLocation: '/splash', // TEMPORAL para desarrollo
   routes: [
-    // TODO: TEMPORAL - Cambiar de vuelta a '/splash' después del desarrollo  
+    
     // ORIGINAL: redirect: (context, state) => '/splash',
     GoRoute(
       path: '/',
-      redirect: (context, state) => '/menu', // TEMPORAL para desarrollo
+      redirect: (context, state) => '/splash', // TEMPORAL para desarrollo
     ),
     
     // Ruta de bienvenida (splash intro)
@@ -42,6 +50,63 @@ final GoRouter appRouter = GoRouter(
       path: '/register',
       builder: (context, state) => const RegisterView(),
     ),
+    
+    // ========================================
+    // RUTAS DE ADMINISTRACIÓN
+    // ========================================
+    
+    // Ruta principal del panel de administración
+    GoRoute(
+      path: '/admin',
+      builder: (context, state) => const AdminHomeView(),
+    ),
+    
+    // Rutas CRUD para categorías (Admin)
+    GoRoute(
+      path: '/admin/categories',
+      builder: (context, state) => const CategoryListViewAdmin(),
+    ),
+    GoRoute(
+      path: '/admin/categories/create',
+      builder: (context, state) => const CategoryCreateViewAdmin(),
+    ),
+    GoRoute(
+      path: '/admin/categories/edit/:id',
+      builder: (context, state) {
+        final categoryId = state.pathParameters['id']!;
+        return CategoryEditViewAdmin(categoryId: categoryId);
+      },
+    ),
+    
+    // Rutas CRUD para items del menú (Admin)
+    GoRoute(
+      path: '/admin/items',
+      builder: (context, state) => const ItemListViewAdmin(),
+    ),
+    GoRoute(
+      path: '/admin/items/create',
+      builder: (context, state) => const ItemCreateViewAdmin(),
+    ),
+    GoRoute(
+      path: '/admin/items/edit/:id',
+      builder: (context, state) {
+        final itemId = state.pathParameters['id']!;
+        return ItemEditViewAdmin(itemId: itemId);
+      },
+    ),
+    
+    // TODO: Agregar rutas CRUD para administración:
+    
+    
+    // - /admin/orders (gestión de pedidos)
+    // - /admin/bookings (gestión de reservas)
+    // - /admin/users (gestión de usuarios)
+    // - /admin/audit (auditoría)
+    // - /admin/settings (configuración)
+    
+    // ========================================
+    // RUTAS DE CLIENTE
+    // ========================================
     
     // Ruta principal - Menú de Categorías (Vista inicial)
     GoRoute(
@@ -116,6 +181,15 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: '/profile',
       builder: (context, state) => const ProfileView(),
+    ),
+    
+    // Ruta para editar perfil de usuario
+    GoRoute(
+      path: '/profile/edit/:id',
+      builder: (context, state) {
+        final userId = int.parse(state.pathParameters['id']!);
+        return ProfileEditView(id: userId);
+      },
     ),
   ],
 

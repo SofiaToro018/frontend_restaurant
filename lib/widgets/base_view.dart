@@ -7,12 +7,14 @@ class BaseView extends StatelessWidget {
   final String title;
   final Widget body;
   final bool showBottomNavbar;
+  final Widget? floatingActionButton;
 
   const BaseView({
     super.key,
     required this.title,
     required this.body,
     this.showBottomNavbar = true,
+    this.floatingActionButton,
   });
 
   @override
@@ -24,6 +26,7 @@ class BaseView extends StatelessWidget {
       bottomNavigationBar: showBottomNavbar
           ? const CustomBottomNavbar() // Barra de navegación inferior persistente
           : null,
+      floatingActionButton: floatingActionButton,
     );
   }
 }

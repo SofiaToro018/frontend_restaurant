@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:frontend_restaurant/routes/app_router.dart';
 import 'themes/app_theme.dart'; // Importa el tema
+import 'auth/services/auth_service.dart';
 
 void main() async {
   // Asegurarse de que los widgets de Flutter estén inicializados
@@ -14,6 +15,12 @@ void main() async {
   }
   // Inicializar dotenv para cargar las variables de entorno
   // await dotenv.load(fileName: ".env");  
+  // Inicializar el servicio de autenticación (carga usuario desde SharedPreferences)
+  try {
+    await AuthService().initializeAuth();
+  } catch (e) {
+    debugPrint('Warning: AuthService.initializeAuth failed: $e');
+  }
 
   runApp(const MyApp());
 }

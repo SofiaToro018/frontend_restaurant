@@ -506,13 +506,23 @@ class _LoginViewState extends State<LoginView> with TickerProviderStateMixin {
         });
 
         if (result.isAuthenticated) {
-          // Login exitoso, navegar al home
+          // Login exitoso
           _showSuccessMessage('¡Bienvenido, ${result.usuario!.formattedName}!');
           
           // Navegar después de un breve delay para mostrar el mensaje
           Future.delayed(const Duration(seconds: 1), () {
             if (mounted) {
-              context.go('/menu');
+              // Redirigir según el rol del usuario
+              final usuario = result.usuario!;
+              
+              if (usuario.rolUsuario.toUpperCase() == 'ADMINISTRADOR' || 
+                  usuario.rolUsuario.toUpperCase() == 'ADMIN') {
+                // Usuario administrador -> Panel de administración
+                context.go('/admin');
+              } else {
+                // Usuario cliente u otro rol -> Menú principal
+                context.go('/menu');
+              }
             }
           });
         } else if (result.hasError) {
