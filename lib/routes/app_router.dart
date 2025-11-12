@@ -13,13 +13,14 @@ import '../views/profile/profile_edit_view.dart';
 import '../auth/views/login_view.dart';
 import '../auth/views/register_view.dart';
 import '../views/splash_intro/splash_intro_view.dart';
+import '../admin/views/admin_home_view.dart';
 
 final GoRouter appRouter = GoRouter(
-  // TODO: TEMPORAL - Cambiar de vuelta a '/splash' después del desarrollo
+  
   // ORIGINAL: initialLocation: '/splash',
   initialLocation: '/splash', // TEMPORAL para desarrollo
   routes: [
-    // TODO: TEMPORAL - Cambiar de vuelta a '/splash' después del desarrollo  
+    
     // ORIGINAL: redirect: (context, state) => '/splash',
     GoRoute(
       path: '/',
@@ -43,6 +44,29 @@ final GoRouter appRouter = GoRouter(
       path: '/register',
       builder: (context, state) => const RegisterView(),
     ),
+    
+    // ========================================
+    // RUTAS DE ADMINISTRACIÓN
+    // ========================================
+    
+    // Ruta principal del panel de administración
+    GoRoute(
+      path: '/admin',
+      builder: (context, state) => const AdminHomeView(),
+    ),
+    
+    // TODO: Agregar rutas CRUD para administración:
+    // - /admin/categories (gestión de categorías)
+    // - /admin/items (gestión de items del menú)
+    // - /admin/orders (gestión de pedidos)
+    // - /admin/bookings (gestión de reservas)
+    // - /admin/users (gestión de usuarios)
+    // - /admin/audit (auditoría)
+    // - /admin/settings (configuración)
+    
+    // ========================================
+    // RUTAS DE CLIENTE
+    // ========================================
     
     // Ruta principal - Menú de Categorías (Vista inicial)
     GoRoute(
