@@ -20,6 +20,18 @@ import '../admin/views/category/category_edit_view_admin.dart';
 import '../admin/views/item_category/item_list_view_admin.dart';
 import '../admin/views/item_category/item_create_view_admin.dart';
 import '../admin/views/item_category/item_edit_view_admin.dart';
+import '../admin/views/orders/order_list_view_admin.dart';
+import '../admin/views/orders/order_create_view_admin.dart';
+import '../admin/views/orders/order_edit_view_admin.dart';
+import '../admin/views/parking/parking_list_view_admin.dart';
+import '../admin/views/parking/parking_create_view_admin.dart';
+import '../admin/views/parking/parking_edit_view_admin.dart';
+import '../admin/views/tables/table_list_view_admin.dart';
+import '../admin/views/tables/table_create_view_admin.dart';
+import '../admin/views/tables/table_edit_view_admin.dart';
+import '../admin/views/events/event_list_view_admin.dart';
+import '../admin/views/events/event_create_view_admin.dart';
+import '../admin/views/events/event_edit_view_admin.dart';
 
 final GoRouter appRouter = GoRouter(
   
@@ -95,10 +107,78 @@ final GoRouter appRouter = GoRouter(
       },
     ),
     
+    // Rutas CRUD para pedidos (Admin)
+    GoRoute(
+      path: '/admin/orders',
+      builder: (context, state) => const OrderListViewAdmin(),
+    ),
+    GoRoute(
+      path: '/admin/orders/create',
+      builder: (context, state) => const OrderCreateViewAdmin(),
+    ),
+    GoRoute(
+      path: '/admin/orders/edit/:id',
+      builder: (context, state) {
+        final orderId = state.pathParameters['id']!;
+        return OrderEditViewAdmin(orderId: orderId);
+      },
+    ),
+    
+    // Rutas CRUD para parqueadero (Admin)
+    GoRoute(
+      path: '/admin/parking',
+      builder: (context, state) => const ParkingListViewAdmin(),
+    ),
+    GoRoute(
+      path: '/admin/parking/create',
+      builder: (context, state) => const ParkingCreateViewAdmin(),
+    ),
+    GoRoute(
+      path: '/admin/parking/edit/:id',
+      builder: (context, state) {
+        final parkingId = state.pathParameters['id']!;
+        return ParkingEditViewAdmin(parkingId: parkingId);
+      },
+    ),
+    
+    // Rutas CRUD para mesas (Admin)
+    GoRoute(
+      path: '/admin/tables',
+      builder: (context, state) => const TableListViewAdmin(),
+    ),
+    GoRoute(
+      path: '/admin/tables/create',
+      builder: (context, state) => const TableCreateViewAdmin(),
+    ),
+    GoRoute(
+      path: '/admin/tables/edit/:id',
+      builder: (context, state) {
+        final tableId = state.pathParameters['id']!;
+        return TableEditViewAdmin(tableId: tableId);
+      },
+    ),
+    
+    // Rutas CRUD para eventos (Admin)
+    GoRoute(
+      path: '/admin/events',
+      builder: (context, state) => const EventListViewAdmin(),
+    ),
+    GoRoute(
+      path: '/admin/events/create',
+      builder: (context, state) => const EventCreateViewAdmin(),
+    ),
+    GoRoute(
+      path: '/admin/events/edit/:id',
+      builder: (context, state) {
+        final eventId = state.pathParameters['id']!;
+        return EventEditViewAdmin(eventId: eventId);
+      },
+    ),
+    
     // TODO: Agregar rutas CRUD para administración:
     
+
     
-    // - /admin/orders (gestión de pedidos)
     // - /admin/bookings (gestión de reservas)
     // - /admin/users (gestión de usuarios)
     // - /admin/audit (auditoría)
