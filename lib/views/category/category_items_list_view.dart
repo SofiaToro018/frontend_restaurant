@@ -3,8 +3,10 @@ import 'package:go_router/go_router.dart';
 
 import '../../models/category.dart';
 import '../../services/category_service.dart';
+import '../../services/cart_service.dart';
 import '../../themes/category_theme/category_items_list_view_theme.dart';
 import '../../utils/currency_formatter.dart';
+import '../../widgets/cart_drawer.dart';
 
 class CategoryItemsListView extends StatefulWidget {
   final String categoryId;
@@ -18,6 +20,8 @@ class CategoryItemsListView extends StatefulWidget {
 class _CategoryItemsListViewState extends State<CategoryItemsListView> {
   // Se crea una instancia de la clase CategoryService
   final CategoryService _categoryService = CategoryService();
+  // Se crea una instancia de la clase CartService
+  final CartService _cartService = CartService();
   // Se declara una variable de tipo Future que contendrá el detalle de la categoría
   late Future<Category> _futureCategory;
 
@@ -249,6 +253,64 @@ class _CategoryItemsListViewState extends State<CategoryItemsListView> {
           return const Center(child: CircularProgressIndicator());
         },
       ),
+      
+      // Drawer del carrito (se abre desde la derecha)
+      endDrawer: const CartDrawer(),
+      
+      // FloatingActionButton del carrito
+      floatingActionButton: AnimatedBuilder(
+        animation: _cartService,
+        builder: (context, _) {
+          return Stack(
+            clipBehavior: Clip.none, // permite que el badge sobresalga del FAB
+            children: [
+              FloatingActionButton(
+                onPressed: () => Scaffold.of(context).openEndDrawer(),
+                backgroundColor: const Color(0xFF2E7D32),
+                child: const Icon(
+                  Icons.shopping_cart,
+                  color: Colors.white,
+                  size: 24,
+                ),
+              ),
+
+              // Badge posicionado respecto al Stack (no dentro del FAB)
+              if (_cartService.totalItems > 0)
+                Positioned(
+                  right: -6,
+                  top: -6,
+                  child: Container(
+                    constraints: const BoxConstraints(minWidth: 20, minHeight: 20),
+                    padding: const EdgeInsets.symmetric(horizontal: 6),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(color: Colors.black, width: 1.5),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black26,
+                          blurRadius: 4,
+                          offset: const Offset(0, 1),
+                        ),
+                      ],
+                    ),
+                    child: Center(
+                      child: Text(
+                        _cartService.totalItems > 99 ? '99+' : '${_cartService.totalItems}',
+                        style: const TextStyle(
+                          color: Colors.green,
+                          fontSize: 11,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  ),
+                ),
+            ],
+          );
+        },
+      ),
     );
   }
 
@@ -367,13 +429,20 @@ class _CategoryItemsListViewState extends State<CategoryItemsListView> {
                             ),
                             if (item.estItem) ...[
                               const SizedBox(width: 8),
-                              Container(
-                                padding: CategoryItemsListViewTheme.addButtonPadding,
-                                decoration: CategoryItemsListViewTheme.addButtonDecoration,
-                                child: Icon(
-                                  Icons.add,
-                                  size: CategoryItemsListViewTheme.addButtonIconSize,
-                                  color: CategoryItemsListViewTheme.addButtonIconColor,
+                              Material(
+                                color: Colors.transparent,
+                                child: InkWell(
+                                  borderRadius: BorderRadius.circular(20),
+                                  onTap: () => _addToCart(item),
+                                  child: Container(
+                                    padding: CategoryItemsListViewTheme.addButtonPadding,
+                                    decoration: CategoryItemsListViewTheme.addButtonDecoration,
+                                    child: Icon(
+                                      Icons.add,
+                                      size: CategoryItemsListViewTheme.addButtonIconSize,
+                                      color: CategoryItemsListViewTheme.addButtonIconColor,
+                                    ),
+                                  ),
                                 ),
                               ),
                             ],
@@ -415,7 +484,52 @@ class _CategoryItemsListViewState extends State<CategoryItemsListView> {
         ],
       ),
     );
-  }  IconData _getCategoryIcon(String categoryName) {
+  }
+
+  /// Agregar item al carrito
+  void _addToCart(ItemMenu item) {
+    _cartService.addItem(item, quantity: 1);
+    
+    // Mostrar snackbar de confirmación
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Row(
+          children: [
+            const Icon(
+              Icons.check_circle,
+              color: Colors.white,
+              size: 20,
+            ),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Text(
+                '${item.nomItem} agregado al carrito',
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ),
+          ],
+        ),
+        backgroundColor: const Color(0xFF2E7D32),
+        duration: const Duration(seconds: 2),
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
+        action: SnackBarAction(
+          label: 'Ver Carrito',
+          textColor: Colors.white,
+          onPressed: () {
+            Scaffold.of(context).openEndDrawer();
+          },
+        ),
+      ),
+    );
+  }
+
+  IconData _getCategoryIcon(String categoryName) {
     switch (categoryName.toLowerCase()) {
       case 'entradas':
         return Icons.restaurant;
