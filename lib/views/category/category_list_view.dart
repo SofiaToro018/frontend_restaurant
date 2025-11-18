@@ -4,8 +4,10 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 import '../../models/category.dart';
 import '../../services/category_service.dart';
+import '../../services/cart_service.dart';
 import '../../themes/category_theme/category_list_view_theme.dart';
 import '../../widgets/base_view.dart';
+import '../../widgets/cart_drawer.dart';
 import '../../utils/currency_formatter.dart';
 
 class CategoryListView extends StatefulWidget {
@@ -17,6 +19,7 @@ class CategoryListView extends StatefulWidget {
 
 class _CategoryListViewState extends State<CategoryListView> {
   final CategoryService _categoryService = CategoryService();
+  final CartService _cartService = CartService();
   late Future<List<Category>> _futureCategories;
 
   @override
@@ -31,15 +34,69 @@ class _CategoryListViewState extends State<CategoryListView> {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        BaseView(
-          title: 'Menú',
-          body: Container(
-            color: CategoryListViewTheme.backgroundColor,
-            child: FutureBuilder<List<Category>>(
-              future: _futureCategories,
-              builder: (context, snapshot) {
+    return Scaffold(
+      endDrawer: const CartDrawer(),
+      floatingActionButtonLocation: const _CustomFloatingActionButtonLocation(),
+      floatingActionButton: AnimatedBuilder(
+        animation: _cartService,
+        builder: (context, _) {
+          return Stack(
+            clipBehavior: Clip.none, // permite que el badge sobresalga del FAB
+            children: [
+              FloatingActionButton(
+                onPressed: () => Scaffold.of(context).openEndDrawer(),
+                backgroundColor: const Color.fromRGBO(46, 125, 50, 1),
+                child: const Icon(
+                  Icons.shopping_cart,
+                  color: Colors.white,
+                  size: 24,
+                ),
+              ),
+
+              // Badge posicionado respecto al Stack (no dentro del FAB)
+              if (_cartService.totalItems > 0)
+                Positioned(
+                  right: -6,
+                  top: -6,
+                  child: Container(
+                    constraints: const BoxConstraints(minWidth: 20, minHeight: 20),
+                    padding: const EdgeInsets.symmetric(horizontal: 6),
+                    decoration: BoxDecoration(
+                      color: const Color.fromARGB(255, 255, 255, 255),
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(color: Colors.black, width: 1.5),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black26,
+                          blurRadius: 4,
+                          offset: const Offset(0, 1),
+                        ),
+                      ],
+                    ),
+                    child: Center(
+                      child: Text(
+                        _cartService.totalItems > 99 ? '99+' : '${_cartService.totalItems}',
+                        style: const TextStyle(
+                          color: Colors.green,
+                          fontSize: 11,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  ),
+                ),
+            ],
+          );
+        },
+      ),
+      body: BaseView(
+        title: 'Menú',
+        body: Container(
+          color: CategoryListViewTheme.backgroundColor,
+          child: FutureBuilder<List<Category>>(
+            future: _futureCategories,
+            builder: (context, snapshot) {
                 if (snapshot.hasData) {
                   final categories = snapshot.data!;
                   if (categories.isEmpty) {
@@ -71,8 +128,7 @@ class _CategoryListViewState extends State<CategoryListView> {
               },
             ),
           ),
-        ),
-      ],
+      ),
     );
   }
 
@@ -462,5 +518,19 @@ class _CategoryListViewState extends State<CategoryListView> {
         ],
       ),
     );
+  }
+}
+
+/// Clase personalizada para posicionar el FloatingActionButton un poco más arriba
+class _CustomFloatingActionButtonLocation extends FloatingActionButtonLocation {
+  const _CustomFloatingActionButtonLocation();
+
+  @override
+  Offset getOffset(ScaffoldPrelayoutGeometry scaffoldGeometry) {
+    // Obtener la posición estándar de endFloat
+    final standardOffset = FloatingActionButtonLocation.endFloat.getOffset(scaffoldGeometry);
+    
+    // Subir el botón 30 píxeles
+    return Offset(standardOffset.dx, standardOffset.dy - 50.0);
   }
 }
