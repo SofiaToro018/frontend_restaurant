@@ -3,7 +3,9 @@ import 'package:go_router/go_router.dart';
 
 import '../../models/category.dart';
 import '../../services/category_service.dart';
+import '../../services/cart_service.dart';
 import '../../themes/category_theme/item_detail_view_theme.dart';
+import '../../widgets/cart_drawer.dart';
 import '../../utils/currency_formatter.dart';
 
 class ItemDetailView extends StatefulWidget {
@@ -17,6 +19,7 @@ class ItemDetailView extends StatefulWidget {
 
 class _ItemDetailViewState extends State<ItemDetailView> {
   final CategoryService _categoryService = CategoryService();
+  final CartService _cartService = CartService();
   late Future<ItemMenu?> _futureItem;
 
   @override
@@ -60,6 +63,64 @@ class _ItemDetailViewState extends State<ItemDetailView> {
             return _buildErrorView(snapshot.error);
           }
           return const Center(child: CircularProgressIndicator());
+        },
+      ),
+      
+      // Drawer del carrito (se abre desde la derecha)
+      endDrawer: const CartDrawer(),
+      
+      // FloatingActionButton del carrito
+      floatingActionButton: AnimatedBuilder(
+        animation: _cartService,
+        builder: (context, _) {
+          return Stack(
+            clipBehavior: Clip.none, // permite que el badge sobresalga del FAB
+            children: [
+              FloatingActionButton(
+                onPressed: () => Scaffold.of(context).openEndDrawer(),
+                backgroundColor: const Color(0xFF2E7D32),
+                child: const Icon(
+                  Icons.shopping_cart,
+                  color: Colors.white,
+                  size: 24,
+                ),
+              ),
+
+              // Badge posicionado respecto al Stack (no dentro del FAB)
+              if (_cartService.totalItems > 0)
+                Positioned(
+                  right: -6,
+                  top: -6,
+                  child: Container(
+                    constraints: const BoxConstraints(minWidth: 20, minHeight: 20),
+                    padding: const EdgeInsets.symmetric(horizontal: 6),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(color: Colors.black, width: 1.5),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black26,
+                          blurRadius: 4,
+                          offset: const Offset(0, 1),
+                        ),
+                      ],
+                    ),
+                    child: Center(
+                      child: Text(
+                        _cartService.totalItems > 99 ? '99+' : '${_cartService.totalItems}',
+                        style: const TextStyle(
+                          color: Colors.green,
+                          fontSize: 11,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  ),
+                ),
+            ],
+          );
         },
       ),
     );
@@ -267,15 +328,7 @@ class _ItemDetailViewState extends State<ItemDetailView> {
           height: ItemDetailViewTheme.actionButtonHeight,
           child: ElevatedButton(
             onPressed: item.estItem
-                ? () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text('${item.nomItem} añadido'),
-                        backgroundColor: ItemDetailViewTheme.primaryOrangeShade600,
-                        behavior: SnackBarBehavior.floating,
-                      ),
-                    );
-                  }
+                ? () => _addToCart(item)
                 : null,
             style: ItemDetailViewTheme.primaryButtonStyle(item.estItem),
             child: Row(
@@ -465,6 +518,49 @@ class _ItemDetailViewState extends State<ItemDetailView> {
               ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+
+  /// Agregar item al carrito
+  void _addToCart(ItemMenu item) {
+    _cartService.addItem(item, quantity: 1);
+    
+    // Mostrar snackbar de confirmación
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Row(
+          children: [
+            const Icon(
+              Icons.check_circle,
+              color: Colors.white,
+              size: 20,
+            ),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Text(
+                '${item.nomItem} agregado al carrito',
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ),
+          ],
+        ),
+        backgroundColor: const Color(0xFF2E7D32),
+        duration: const Duration(seconds: 2),
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
+        action: SnackBarAction(
+          label: 'Ver Carrito',
+          textColor: Colors.white,
+          onPressed: () {
+            Scaffold.of(context).openEndDrawer();
+          },
         ),
       ),
     );
